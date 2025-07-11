@@ -15,31 +15,9 @@ RectifyThemeCfgPage::~RectifyThemeCfgPage()
 
 }
 
-HRESULT RectifyThemeCfgPage::CreateInstance(Element* rootElement, unsigned long* debug_variable, Element** newElement)
+HRESULT RectifyThemeCfgPage::Create(Element* pParent, DWORD* pdwDeferCookie, Element** ppElement)
 {
-	int hr = E_OUTOFMEMORY;
-
-	RectifyThemeCfgPage* instance = (RectifyThemeCfgPage*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(RectifyThemeCfgPage));
-
-	if (instance != NULL)
-	{
-		new (instance) RectifyThemeCfgPage();
-		hr = instance->Initialize(0, rootElement, debug_variable);
-		if (SUCCEEDED(hr))
-		{
-			*newElement = instance;
-		}
-		else
-		{
-			if (instance != NULL)
-			{
-				instance->Destroy(TRUE);
-				instance = NULL;
-			}
-		}
-	}
-
-	return hr;
+	return CreateAndInit<RectifyThemeCfgPage, int>(0, pParent, pdwDeferCookie, ppElement);
 }
 
 IClassInfo* RectifyThemeCfgPage::GetClassInfoW()
@@ -49,29 +27,29 @@ IClassInfo* RectifyThemeCfgPage::GetClassInfoW()
 
 void RectifyThemeCfgPage::OnEvent(Event* iev)
 {
-	if (iev->flag != GMF_ROUTED)
+	if (iev->nStage != GMF_ROUTED)
 		return;
-	if (!iev->handled)
+	if (!iev->fHandled)
 		Element::OnEvent(iev);
 	if (initializing) return;
 
-	if (iev->type == TouchButton::Click)
+	if (iev->uidType == TouchButton::Click)
 	{
-		if (iev->target->GetID() == StrToID((UCString)L"SaveThemePreferences"))
+		if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"SaveThemePreferences"))
 		{
-			TouchCheckBox* IgnoreBg = (TouchCheckBox*)FindDescendent(StrToID((UCString)L"IgnoreBg"));
-			TouchCheckBox* IgnoreCursors = (TouchCheckBox*)FindDescendent(StrToID((UCString)L"IgnoreCursors"));
-			TouchCheckBox* IgnoreIcons = (TouchCheckBox*)FindDescendent(StrToID((UCString)L"IgnoreIcons"));
-			TouchCheckBox* IgnoreColors = (TouchCheckBox*)FindDescendent(StrToID((UCString)L"IgnoreColors"));
-			TouchCheckBox* IgnoreSounds = (TouchCheckBox*)FindDescendent(StrToID((UCString)L"IgnoreSounds"));
-			TouchCheckBox* IgnoreScreensavers = (TouchCheckBox*)FindDescendent(StrToID((UCString)L"IgnoreScreensavers"));
+			TouchCheckBox* IgnoreBg = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"IgnoreBg"));
+			TouchCheckBox* IgnoreCursors = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"IgnoreCursors"));
+			TouchCheckBox* IgnoreIcons = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"IgnoreIcons"));
+			TouchCheckBox* IgnoreColors = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"IgnoreColors"));
+			TouchCheckBox* IgnoreSounds = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"IgnoreSounds"));
+			TouchCheckBox* IgnoreScreensavers = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"IgnoreScreensavers"));
 
-			DWORD IgnoreBgVal = IgnoreBg->GetCheckedState() != CheckedStateFlags_NONE;
-			DWORD IgnoreCursorsVal = IgnoreCursors->GetCheckedState() != CheckedStateFlags_NONE;
-			DWORD IgnoreIconsVal = IgnoreIcons->GetCheckedState() != CheckedStateFlags_NONE;
-			DWORD IgnoreColorsVal = IgnoreColors->GetCheckedState() != CheckedStateFlags_NONE;
-			DWORD IgnoreSoundsVal = IgnoreSounds->GetCheckedState() != CheckedStateFlags_NONE;
-			DWORD IgnoreScreensaversVal = IgnoreScreensavers->GetCheckedState() != CheckedStateFlags_NONE;
+			DWORD IgnoreBgVal = IgnoreBg->GetCheckedState() != CSF_Unchecked;
+			DWORD IgnoreCursorsVal = IgnoreCursors->GetCheckedState() != CSF_Unchecked;
+			DWORD IgnoreIconsVal = IgnoreIcons->GetCheckedState() != CSF_Unchecked;
+			DWORD IgnoreColorsVal = IgnoreColors->GetCheckedState() != CSF_Unchecked;
+			DWORD IgnoreSoundsVal = IgnoreSounds->GetCheckedState() != CSF_Unchecked;
+			DWORD IgnoreScreensaversVal = IgnoreScreensavers->GetCheckedState() != CSF_Unchecked;
 
 			HKEY Rectify11;
 			if (RegCreateKey(HKEY_CURRENT_USER, Rectify11PrefsKey, &Rectify11))
@@ -91,7 +69,7 @@ void RectifyThemeCfgPage::OnEvent(Event* iev)
 			RegCloseKey(Rectify11);
 			GoBack();
 		}
-		else if (iev->target->GetID() == StrToID((UCString)L"IgnoreThemePreferences"))
+		else if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"IgnoreThemePreferences"))
 		{
 			GoBack();
 		}
@@ -125,15 +103,15 @@ void RectifyThemeCfgPage::GoBack()
 void RectifyThemeCfgPage::OnInit()
 {
 	Element* root = GetRoot();
-	TouchCheckBox* IgnoreBg = (TouchCheckBox*)root->FindDescendent(StrToID((UCString)L"IgnoreBg"));
-	TouchCheckBox* IgnoreCursors = (TouchCheckBox*)root->FindDescendent(StrToID((UCString)L"IgnoreCursors"));
-	TouchCheckBox* IgnoreIcons = (TouchCheckBox*)root->FindDescendent(StrToID((UCString)L"IgnoreIcons"));
-	TouchCheckBox* IgnoreColors = (TouchCheckBox*)root->FindDescendent(StrToID((UCString)L"IgnoreColors"));
-	TouchCheckBox* IgnoreSounds = (TouchCheckBox*)root->FindDescendent(StrToID((UCString)L"IgnoreSounds"));
-	TouchCheckBox* IgnoreScreensavers = (TouchCheckBox*)root->FindDescendent(StrToID((UCString)L"IgnoreScreensavers"));
+	TouchCheckBox* IgnoreBg = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"IgnoreBg"));
+	TouchCheckBox* IgnoreCursors = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"IgnoreCursors"));
+	TouchCheckBox* IgnoreIcons = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"IgnoreIcons"));
+	TouchCheckBox* IgnoreColors = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"IgnoreColors"));
+	TouchCheckBox* IgnoreSounds = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"IgnoreSounds"));
+	TouchCheckBox* IgnoreScreensavers = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"IgnoreScreensavers"));
 
-	TouchButton* SaveThemePreferences = (TouchButton*)root->FindDescendent(StrToID((UCString)L"SaveThemePreferences"));
-	TouchButton* IgnoreThemePreferences = (TouchButton*)root->FindDescendent(StrToID((UCString)L"IgnoreThemePreferences"));
+	TouchButton* SaveThemePreferences = (TouchButton*)root->FindDescendent(StrToID((LPCWSTR)L"SaveThemePreferences"));
+	TouchButton* IgnoreThemePreferences = (TouchButton*)root->FindDescendent(StrToID((LPCWSTR)L"IgnoreThemePreferences"));
 
 	HKEY Rectify11;
 	if (RegCreateKey(HKEY_CURRENT_USER, Rectify11PrefsKey, &Rectify11))
@@ -167,11 +145,11 @@ void RectifyThemeCfgPage::OnInit()
 	IgnoreSounds->SetToggleOnClick(true);
 	IgnoreScreensavers->SetToggleOnClick(true);
 
-	IgnoreBg->SetCheckedState(IgnoreBgVal ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
-	IgnoreCursors->SetCheckedState(IgnoreCursorsVal ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
-	IgnoreIcons->SetCheckedState(IgnoreIconsVal ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
-	IgnoreColors->SetCheckedState(IgnoreColorsVal ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
-	IgnoreSounds->SetCheckedState(IgnoreSoundsVal ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
-	IgnoreScreensavers->SetCheckedState(IgnoreScreensaversVal ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
+	IgnoreBg->SetCheckedState(IgnoreBgVal ? CSF_Checked : CSF_Unchecked);
+	IgnoreCursors->SetCheckedState(IgnoreCursorsVal ? CSF_Checked : CSF_Unchecked);
+	IgnoreIcons->SetCheckedState(IgnoreIconsVal ? CSF_Checked : CSF_Unchecked);
+	IgnoreColors->SetCheckedState(IgnoreColorsVal ? CSF_Checked : CSF_Unchecked);
+	IgnoreSounds->SetCheckedState(IgnoreSoundsVal ? CSF_Checked : CSF_Unchecked);
+	IgnoreScreensavers->SetCheckedState(IgnoreScreensaversVal ? CSF_Checked : CSF_Unchecked);
 	initializing = false;
 }

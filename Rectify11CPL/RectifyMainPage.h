@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include "IRectifyUtil_h.h"
+
 typedef std::map<int, wstring> ThemesMapBase;
 
 class RectifyMainPage : public Element
@@ -11,7 +12,7 @@ public:
 	virtual ~RectifyMainPage() override;
 
 	static DirectUI::IClassInfo* Class;
-	static HRESULT CreateInstance(Element* a, unsigned long* b, Element** c);
+	static HRESULT Create(Element* pParent, DWORD* pdwDeferCookie, Element** ppElement);
 
 	//Element
 	virtual IClassInfo* GetClassInfoW() override;
@@ -25,7 +26,7 @@ public:
 	virtual void SetSite(IUnknown* site) { this->site = site;  }
 
 	static inline DirectUI::IClassInfo* GetClassInfoPtr() { return Class; }
-	static inline UCString DoGetClassName() { return (UCString)L"RectifyMainPage"; }
+
 private:
 	bool HasAdmin = false;
 	IRectifyUtil* RectifyUtil = NULL;

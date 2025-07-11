@@ -20,32 +20,9 @@ RectifyMainPage::~RectifyMainPage()
 
 }
 
-HRESULT RectifyMainPage::CreateInstance(Element* rootElement, unsigned long* debug_variable, Element** newElement)
+HRESULT RectifyMainPage::Create(Element* pParent, DWORD* pdwDeferCookie, Element** ppElement)
 {
-	int hr = E_OUTOFMEMORY;
-
-	// Using HeapAlloc instead of new() is required as DirectUI::Element::_DisplayNodeCallback calls HeapFree() with the element
-	RectifyMainPage* instance = (RectifyMainPage*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(RectifyMainPage));
-
-	if (instance != NULL)
-	{
-		new (instance) RectifyMainPage();
-		hr = instance->Initialize(0, rootElement, debug_variable);
-		if (SUCCEEDED(hr))
-		{
-			*newElement = instance;
-		}
-		else
-		{
-			if (instance != NULL)
-			{
-				instance->Destroy(TRUE);
-				instance = NULL;
-			}
-		}
-	}
-
-	return hr;
+	return CreateAndInit<RectifyMainPage, int>(0, pParent, pdwDeferCookie, ppElement);
 }
 
 IClassInfo* RectifyMainPage::GetClassInfoW()
@@ -55,20 +32,20 @@ IClassInfo* RectifyMainPage::GetClassInfoW()
 
 void RectifyMainPage::OnEvent(Event* iev)
 {
-	if (iev->flag != GMF_BUBBLED)
+	if (iev->nStage != GMF_BUBBLED)
 		return;
-	if (!iev->handled)
+	if (!iev->fHandled)
 		Element::OnEvent(iev);
 
 	if (initializing) return;
-	if (iev->target->GetID() == StrToID((UCString)L"Link_EnableAdmin"))
+	if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"Link_EnableAdmin"))
 	{
-		if (iev->type == TouchButton::Click)
+		if (iev->uidType == TouchButton::Click)
 		{
 			IRectifyUtil* utility = ElevationManager::Initialize(GetMainHwnd());
-			TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)FindDescendent(StrToID((UCString)L"MicaChk"));
-			TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)FindDescendent(StrToID((UCString)L"TabChk"));
-			TouchButton* ThemetoolInstall = (TouchButton*)FindDescendent(StrToID((UCString)L"ThemetoolInstall"));
+			TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"MicaChk"));
+			TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"TabChk"));
+			TouchButton* ThemetoolInstall = (TouchButton*)FindDescendent(StrToID((LPCWSTR)L"ThemetoolInstall"));
 			if (utility != NULL)
 			{
 				// Destroy old class
@@ -82,20 +59,20 @@ void RectifyMainPage::OnEvent(Event* iev)
 
 				ULONG key = 0;
 				this->StartDefer(&key);
-				iev->target->SetLayoutPos(-3);
-				iev->target->SetVisible(FALSE);
+				iev->peTarget->SetLayoutPos(-3);
+				iev->peTarget->SetVisible(FALSE);
 				ThemetoolInstall->SetEnabled(TRUE);
 
 				MicaForEveryoneCheckbox->SetEnabled(TRUE);
-				if (MicaForEveryoneCheckbox->GetCheckedState() != CheckedStateFlags_NONE)
+				if (MicaForEveryoneCheckbox->GetCheckedState() != CSF_Unchecked)
 					TabbedCheckbox->SetEnabled(TRUE);
 
 
-				CCRadioButton* Win11DefaultMenus = (CCRadioButton*)FindDescendent(StrToID((UCString)L"Win11DefaultMenus"));
-				CCRadioButton* NilesoftSmall = (CCRadioButton*)FindDescendent(StrToID((UCString)L"NilesoftSmall"));
-				CCRadioButton* NilesoftFull = (CCRadioButton*)FindDescendent(StrToID((UCString)L"NilesoftFull"));
-				CCRadioButton* Classic = (CCRadioButton*)FindDescendent(StrToID((UCString)L"Classic"));
-				CCRadioButton* ClassicTransparent = (CCRadioButton*)FindDescendent(StrToID((UCString)L"ClassicTransparent"));
+				CCRadioButton* Win11DefaultMenus = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"Win11DefaultMenus"));
+				CCRadioButton* NilesoftSmall = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"NilesoftSmall"));
+				CCRadioButton* NilesoftFull = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"NilesoftFull"));
+				CCRadioButton* Classic = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"Classic"));
+				CCRadioButton* ClassicTransparent = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"ClassicTransparent"));
 
 				CCRadioButton* Options[] = { Win11DefaultMenus, NilesoftSmall, NilesoftFull, Classic, ClassicTransparent };
 				for (size_t i = 0; i < 5; i++)
@@ -107,24 +84,24 @@ void RectifyMainPage::OnEvent(Event* iev)
 			}
 		}
 	}
-	else if (iev->target->GetID() == StrToID((UCString)L"BtnRestartExplorer"))
+	else if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"BtnRestartExplorer"))
 	{
-		if (iev->type == TouchButton::Click)
+		if (iev->uidType == TouchButton::Click)
 		{
 			CRectifyUtil::RestartExplorer();
 
 			// hide restart explorer button
-			iev->target->SetLayoutPos(-3);
-			iev->target->SetVisible(FALSE);
+			iev->peTarget->SetLayoutPos(-3);
+			iev->peTarget->SetVisible(FALSE);
 		}
 	}
-	else if (iev->target->GetID() == StrToID((UCString)L"ThemeCmb"))
+	else if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"ThemeCmb"))
 	{
-		if (iev->type == Combobox::SelectionChange)
+		if (iev->uidType == Combobox::SelectionChange)
 		{
-			TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)FindDescendent(StrToID((UCString)L"MicaChk"));
-			TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)FindDescendent(StrToID((UCString)L"TabChk"));
-			int selection = ((Combobox*)iev->target)->GetSelection();
+			TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"MicaChk"));
+			TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"TabChk"));
+			int selection = ((Combobox*)iev->peTarget)->GetSelection();
 
 			ULONG apply_flags = 0;
 
@@ -191,48 +168,48 @@ void RectifyMainPage::OnEvent(Event* iev)
 				RectifyUtil->SetMicaForEveryoneEnabled(hasMica, hasTabbed);
 
 				// update checkboxes in case we aren't using a mica theme anymore
-				MicaForEveryoneCheckbox->SetCheckedState(hasMica ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
-				TabbedCheckbox->SetCheckedState(hasTabbed ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
+				MicaForEveryoneCheckbox->SetCheckedState(hasMica ? CSF_Checked : CSF_Unchecked);
+				TabbedCheckbox->SetCheckedState(hasTabbed ? CSF_Checked : CSF_Unchecked);
 			}
 		}
 	}
-	else if (iev->target->GetID() == StrToID((UCString)L"buttonHelp"))
+	else if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"buttonHelp"))
 	{
-		if (iev->type == Button::Click)
+		if (iev->uidType == Button::Click)
 		{
 			ShellExecute(0, 0, TEXT("http://rectify11.net"), 0, 0, SW_SHOW);
 		}
 	}
-	else if (iev->target->GetID() == StrToID((UCString)L"MicaChk"))
+	else if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"MicaChk"))
 	{
-		TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)iev->target;
-		TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)GetRoot()->FindDescendent(StrToID((UCString)L"TabChk"));
-		Combobox* ThemeCombo = (Combobox*)GetRoot()->FindDescendent(StrToID((UCString)L"ThemeCmb"));
-		if (iev->type == TouchButton::Click)
+		TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)iev->peTarget;
+		TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)GetRoot()->FindDescendent(StrToID((LPCWSTR)L"TabChk"));
+		Combobox* ThemeCombo = (Combobox*)GetRoot()->FindDescendent(StrToID((LPCWSTR)L"ThemeCmb"));
+		if (iev->uidType == TouchButton::Click)
 		{
 			CheckedStateFlags MicaEnabled2 = MicaForEveryoneCheckbox->GetCheckedState();
 			CheckedStateFlags TabbedEnabled = TabbedCheckbox->GetCheckedState();
 
-			RectifyUtil->SetMicaForEveryoneEnabled(MicaEnabled2 == CheckedStateFlags_CHECKED ? TRUE : FALSE, TabbedEnabled ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
+			RectifyUtil->SetMicaForEveryoneEnabled(MicaEnabled2 == CSF_Checked ? TRUE : FALSE, TabbedEnabled ? CSF_Checked : CSF_Unchecked);
 
 			// Enable/disable the tabbed checkbox
 			if (TabbedCheckbox != NULL)
-				TabbedCheckbox->SetEnabled(MicaEnabled2 == CheckedStateFlags_CHECKED ? TRUE : FALSE);
+				TabbedCheckbox->SetEnabled(MicaEnabled2 == CSF_Checked ? TRUE : FALSE);
 		}
 	}
-	else if (iev->target->GetID() == StrToID((UCString)L"TabChk"))
+	else if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"TabChk"))
 	{
-		TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)iev->target;
-		Combobox* ThemeCombo = (Combobox*)FindDescendent(StrToID((UCString)L"ThemeCmb"));
+		TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)iev->peTarget;
+		Combobox* ThemeCombo = (Combobox*)FindDescendent(StrToID((LPCWSTR)L"ThemeCmb"));
 
-		if (iev->type == TouchButton::Click)
+		if (iev->uidType == TouchButton::Click)
 		{
-			RectifyUtil->SetMicaForEveryoneEnabled(TRUE, TabbedCheckbox->GetCheckedState() == CheckedStateFlags_CHECKED ? TRUE : FALSE);
+			RectifyUtil->SetMicaForEveryoneEnabled(TRUE, TabbedCheckbox->GetCheckedState() == CSF_Checked ? TRUE : FALSE);
 		}
 	}
-	else if (iev->target->GetID() == StrToID((UCString)L"ThemetoolInstall"))
+	else if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"ThemetoolInstall"))
 	{
-		iev->target->SetEnabled(FALSE);
+		iev->peTarget->SetEnabled(FALSE);
 		HRESULT hr = RectifyUtil->InstallThemeTool();
 		if (FAILED(hr))
 		{
@@ -244,32 +221,32 @@ void RectifyMainPage::OnEvent(Event* iev)
 		}
 
 		UpdateThemetoolStatus();
-		iev->target->SetEnabled(TRUE);
+		iev->peTarget->SetEnabled(TRUE);
 	}
 	// handle menu section
-	if (iev->type == Button::Click && !wcscmp((const wchar_t*)iev->target->GetClassInfoW()->GetName(), (const wchar_t*)CCRadioButton::GetClassInfoPtr()->GetName()))
+	if (iev->uidType == Button::Click && !wcscmp((const wchar_t*)iev->peTarget->GetClassInfoW()->GetName(), (const wchar_t*)CCRadioButton::GetClassInfoPtr()->GetName()))
 	{
-		CCRadioButton* chkbox = (CCRadioButton*)iev->target;
+		CCRadioButton* chkbox = (CCRadioButton*)iev->peTarget;
 		if (chkbox->GetSelected())
 		{
 			HRESULT hr = E_ACTIVATIONDENIED_SHELLERROR;
-			if (chkbox->GetID() == StrToID((UCString)L"Win11DefaultMenus"))
+			if (chkbox->GetID() == StrToID((LPCWSTR)L"Win11DefaultMenus"))
 			{
 				hr = RectifyUtil->SetCurrentMenuByIndex(Normal);
 			}
-			else if (chkbox->GetID() == StrToID((UCString)L"NilesoftSmall"))
+			else if (chkbox->GetID() == StrToID((LPCWSTR)L"NilesoftSmall"))
 			{
 				hr = RectifyUtil->SetCurrentMenuByIndex(NilesoftSmall);
 			}
-			else if (chkbox->GetID() == StrToID((UCString)L"NilesoftFull"))
+			else if (chkbox->GetID() == StrToID((LPCWSTR)L"NilesoftFull"))
 			{
 				hr = RectifyUtil->SetCurrentMenuByIndex(NilesoftFull);
 			}
-			else if (chkbox->GetID() == StrToID((UCString)L"Classic"))
+			else if (chkbox->GetID() == StrToID((LPCWSTR)L"Classic"))
 			{
 				hr = RectifyUtil->SetCurrentMenuByIndex(Classic);
 			}
-			else if (chkbox->GetID() == StrToID((UCString)L"ClassicTransparent"))
+			else if (chkbox->GetID() == StrToID((LPCWSTR)L"ClassicTransparent"))
 			{
 				hr = RectifyUtil->SetCurrentMenuByIndex(ClassicTransparent);
 			}
@@ -290,7 +267,7 @@ void RectifyMainPage::OnEvent(Event* iev)
 
 void RectifyMainPage::ShowRestartExplorer()
 {
-	TouchButton* BtnRestartExplorer = (TouchButton*)FindDescendent(StrToID((UCString)L"BtnRestartExplorer"));
+	TouchButton* BtnRestartExplorer = (TouchButton*)FindDescendent(StrToID((LPCWSTR)L"BtnRestartExplorer"));
 	BtnRestartExplorer->SetLayoutPos(0);
 	BtnRestartExplorer->SetVisible(TRUE);
 }
@@ -304,7 +281,7 @@ void RectifyMainPage::UpdateThemeGraphic()
 		return;
 	}
 	Value* bitmap = DirectUI::Value::CreateGraphic(bmp, 3, 0xffffffff, false, false, false);
-	Element* PreviewElement = FindDescendent(StrToID((UCString)L"ThemePreview"));
+	Element* PreviewElement = FindDescendent(StrToID((LPCWSTR)L"ThemePreview"));
 	if (PreviewElement != NULL)
 		PreviewElement->SetValue(Element::ContentProp, 1, bitmap);
 	bitmap->Release();
@@ -364,7 +341,7 @@ void RectifyMainPage::InitNavLinks()
 
 void RectifyMainPage::UpdateThemetoolStatus()
 {
-	Element* status = (TouchButton*)FindDescendent(StrToID((UCString)L"ThemetoolStatus"));
+	Element* status = (TouchButton*)FindDescendent(StrToID((LPCWSTR)L"ThemetoolStatus"));
 
 	ULONG flags = secureuxtheme_get_state_flags();
 	wstring statusText;
@@ -413,7 +390,7 @@ void RectifyMainPage::UpdateThemetoolStatus()
 		status->SetForegroundStdColor(113); // red
 	}
 
-	status->SetContentString((UCString)statusText.c_str());
+	status->SetContentString((LPCWSTR)statusText.c_str());
 }
 
 void RectifyMainPage::OnInit()
@@ -422,20 +399,20 @@ void RectifyMainPage::OnInit()
 	RectifyUtil = (IRectifyUtil*)new CRectifyUtil();
 	InitNavLinks();
 
-	Combobox* ThemeCombo = (Combobox*)root->FindDescendent(StrToID((UCString)L"ThemeCmb"));
-	Button* HelpButton = (Button*)root->FindDescendent(StrToID((UCString)L"buttonHelp"));
-	TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)root->FindDescendent(StrToID((UCString)L"MicaChk"));
-	TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)root->FindDescendent(StrToID((UCString)L"TabChk"));
-	Element* version = (Element*)root->FindDescendent(StrToID((UCString)L"RectifyVersion"));
-	TouchButton* enableAdmin = (TouchButton*)root->FindDescendent(StrToID((UCString)L"Link_EnableAdmin"));
-	TouchButton* BtnRestartExplorer = (TouchButton*)root->FindDescendent(StrToID((UCString)L"BtnRestartExplorer"));
-	TouchButton* ThemetoolInstall = (TouchButton*)root->FindDescendent(StrToID((UCString)L"ThemetoolInstall"));
+	Combobox* ThemeCombo = (Combobox*)root->FindDescendent(StrToID((LPCWSTR)L"ThemeCmb"));
+	Button* HelpButton = (Button*)root->FindDescendent(StrToID((LPCWSTR)L"buttonHelp"));
+	TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"MicaChk"));
+	TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"TabChk"));
+	Element* version = (Element*)root->FindDescendent(StrToID((LPCWSTR)L"RectifyVersion"));
+	TouchButton* enableAdmin = (TouchButton*)root->FindDescendent(StrToID((LPCWSTR)L"Link_EnableAdmin"));
+	TouchButton* BtnRestartExplorer = (TouchButton*)root->FindDescendent(StrToID((LPCWSTR)L"BtnRestartExplorer"));
+	TouchButton* ThemetoolInstall = (TouchButton*)root->FindDescendent(StrToID((LPCWSTR)L"ThemetoolInstall"));
 
-	CCRadioButton* Win11DefaultMenus = (CCRadioButton*)root->FindDescendent(StrToID((UCString)L"Win11DefaultMenus"));
-	CCRadioButton* NilesoftSmall = (CCRadioButton*)root->FindDescendent(StrToID((UCString)L"NilesoftSmall"));
-	CCRadioButton* NilesoftFull = (CCRadioButton*)root->FindDescendent(StrToID((UCString)L"NilesoftFull"));
-	CCRadioButton* Classic = (CCRadioButton*)root->FindDescendent(StrToID((UCString)L"Classic"));
-	CCRadioButton* ClassicTransparent = (CCRadioButton*)root->FindDescendent(StrToID((UCString)L"ClassicTransparent"));
+	CCRadioButton* Win11DefaultMenus = (CCRadioButton*)root->FindDescendent(StrToID((LPCWSTR)L"Win11DefaultMenus"));
+	CCRadioButton* NilesoftSmall = (CCRadioButton*)root->FindDescendent(StrToID((LPCWSTR)L"NilesoftSmall"));
+	CCRadioButton* NilesoftFull = (CCRadioButton*)root->FindDescendent(StrToID((LPCWSTR)L"NilesoftFull"));
+	CCRadioButton* Classic = (CCRadioButton*)root->FindDescendent(StrToID((LPCWSTR)L"Classic"));
+	CCRadioButton* ClassicTransparent = (CCRadioButton*)root->FindDescendent(StrToID((LPCWSTR)L"ClassicTransparent"));
 
 	CCRadioButton* Options[] = { Win11DefaultMenus, NilesoftSmall, NilesoftFull, Classic, ClassicTransparent };
 
@@ -460,7 +437,7 @@ void RectifyMainPage::OnInit()
 
 					if (nameBuffer.starts_with(L"Rectify11"))
 					{
-						ThemeCombo->AddString((UString)nameBuffer.c_str());
+						ThemeCombo->AddString((LPWSTR)nameBuffer.c_str());
 						std::wstring pathBuff = std::wstring();
 						theme->GetVisualStyle(pathBuff);
 						std::wstring msstylePath = std::wstring((LPCWSTR)pvData);
@@ -531,7 +508,7 @@ void RectifyMainPage::OnInit()
 				vstr += L" ";
 				vstr += notapplicable;
 			}
-			version->SetContentString((UCString)vstr.c_str());
+			version->SetContentString((LPCWSTR)vstr.c_str());
 		}
 	}
 
@@ -542,7 +519,7 @@ void RectifyMainPage::OnInit()
 		BOOL TabbedEnabled;
 		RectifyUtil->GetMicaSettings(&MicaEnabled, &TabbedEnabled);
 
-		MicaForEveryoneCheckbox->SetCheckedState(MicaEnabled ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
+		MicaForEveryoneCheckbox->SetCheckedState(MicaEnabled ? CSF_Checked : CSF_Unchecked);
 
 		if (!MicaEnabled && TabbedCheckbox != NULL)
 		{
@@ -557,7 +534,7 @@ void RectifyMainPage::OnInit()
 		RectifyUtil->GetMicaSettings(&MicaEnabled, &TabbedEnabled);
 
 		TabbedCheckbox->SetToggleOnClick(true);
-		TabbedCheckbox->SetCheckedState(MicaEnabled ? CheckedStateFlags_CHECKED : CheckedStateFlags_NONE);
+		TabbedCheckbox->SetCheckedState(MicaEnabled ? CSF_Checked : CSF_Unchecked);
 	}
 
 	if (BtnRestartExplorer != NULL)

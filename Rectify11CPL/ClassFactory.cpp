@@ -4,7 +4,6 @@
 #include "ElementProvider.h"
 #include "ClassFactory.h"
 #include "Guid.h"
-#include "Templetes.h"
 #include "RectifyMainPage.h"
 #include "RectifyThemeCfgPage.h"
 
@@ -51,8 +50,8 @@ HRESULT CElementProvider_CreateInstance(__in REFIID riid, __deref_out void** ppv
     {
         hr = pElementProvider->QueryInterface(riid, ppv);
 
-        DirectUI::ClassInfo<RectifyMainPage, DirectUI::Element, DirectUI::StandardCreator<RectifyMainPage>>::Register();
-        DirectUI::ClassInfo<RectifyThemeCfgPage, DirectUI::Element, DirectUI::StandardCreator<RectifyThemeCfgPage>>::Register();
+        DirectUI::ClassInfo<RectifyMainPage, DirectUI::Element>::RegisterGlobal(g_hInst, L"RectifyMainPage", 0, NULL);
+		DirectUI::ClassInfo<RectifyThemeCfgPage, DirectUI::Element>::RegisterGlobal(g_hInst, L"RectifyThemeCfgPage", 0, NULL);
         pElementProvider->Release();
     }
     return hr;

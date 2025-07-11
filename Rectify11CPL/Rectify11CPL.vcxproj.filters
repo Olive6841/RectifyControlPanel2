@@ -41,7 +41,6 @@
     <ClInclude Include="theme.h" />
     <ClInclude Include="CRectifyUtil.h" />
     <ClInclude Include="ElevationManager.h" />
-    <ClInclude Include="Templetes.h" />
     <ClInclude Include="RectifyMainPage.h">
       <Filter>Pages</Filter>
     </ClInclude>

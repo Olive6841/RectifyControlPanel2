@@ -17,11 +17,11 @@
 
 CElementProvider::CElementProvider() : Site(NULL)
 {
-	if (FAILED(InitProcessPriv(14, (unsigned short*)g_hInst, 1, true)))
+	if (FAILED(InitProcessPriv(DUI_VERSION, g_hInst, true, true, true)))
 	{
 		SHOW_ERROR("Failed to initialize DirectUI\n");
 	}
-	if (FAILED(InitThread(2)))
+	if (FAILED(InitThread(DirectUI::TSM_IMMERSIVE)))
 	{
 		SHOW_ERROR("Failed to initialize DirectUI for thread\n");
 	}
@@ -33,7 +33,7 @@ CElementProvider::CElementProvider() : Site(NULL)
 CElementProvider::~CElementProvider()
 {
 	UnInitThread();
-	UnInitProcessPriv((unsigned short*)g_hInst);
+	UnInitProcessPriv(g_hInst);
 
 	DllRelease();
 }
@@ -64,8 +64,8 @@ ULONG CElementProvider::AddRef()
 
 ULONG CElementProvider::Release()
 {
-	ULONG ret = refCount--;
-	ULONG newRefCount = refCount;
+	ULONG ret = _cRef--;
+	ULONG newRefCount = _cRef;
 	if (ret == 1)
 	{
 		delete this;
@@ -115,7 +115,7 @@ HRESULT CElementProvider::CreateDUI(DirectUI::IXElementCP* a, HWND* result_handl
 		}
 		else if (hr == E_FAIL)
 		{
-			if (this->XProviderCP)
+			if (this->_pprovCP)
 			{
 				swprintf(buffer, 200, L"Failed to create DirectUI parser: E_FAIL. This is most likely caused by duires.dll missing in System32. Rerun the latest version of the Rectify11 installer.");
 			}
@@ -147,10 +147,10 @@ HRESULT STDMETHODCALLTYPE CElementProvider::SetResourceID(UINT id)
 	//First parmeter: hinstance of module
 	//2nd: Resource ID of uifile
 	//3rd param: The main resid value
-	int hr = DirectUI::XResourceProvider::Create(g_hInst, (UCString)id, (UCString)buffer, 0, (XResourceProvider**)&this->XProviderCP);
+	int hr = DirectUI::XResourceProvider::Create(g_hInst, MAKEINTRESOURCE(id), (LPCWSTR)buffer, 0, (XResourceProvider**)&this->_pprovCP);
 	if (SUCCEEDED(hr))
 	{
-		hr = DirectUI::XProvider::Initialize(NULL, (IXProviderCP*)this->XProviderCP);
+		hr = DirectUI::XProvider::Initialize(NULL, (IXProviderCP*)this->_pprovCP);
 		if (!SUCCEEDED(hr))
 		{
 			WCHAR szResource[40] = { 0 };
@@ -190,15 +190,15 @@ HRESULT STDMETHODCALLTYPE CElementProvider::LayoutInitialized()
 	// Call initialization function as DirectUI does not provide an "OnLoad" method, unlike WPF/Winforms
 	// This is a bit hacky as Microsoft treats elements as COM objects, and instead iterates through each element, calling
 	// the appropriate method.
-	if (root->FindDescendent(StrToID((UCString)L"MainPageElem")) != NULL)
+	if (root->FindDescendent(StrToID((LPCWSTR)L"MainPageElem")) != NULL)
 	{
-		RectifyMainPage* page = (RectifyMainPage*)root->FindDescendent(StrToID((UCString)L"MainPageElem"));
+		RectifyMainPage* page = (RectifyMainPage*)root->FindDescendent(StrToID((LPCWSTR)L"MainPageElem"));
 		page->SetSite(Site);
 		page->OnInit();
 	}
-	else if (root->FindDescendent(StrToID((UCString)L"ThemePageElem")) != NULL)
+	else if (root->FindDescendent(StrToID((LPCWSTR)L"ThemePageElem")) != NULL)
 	{
-		RectifyThemeCfgPage* page = (RectifyThemeCfgPage*)root->FindDescendent(StrToID((UCString)L"ThemePageElem"));
+		RectifyThemeCfgPage* page = (RectifyThemeCfgPage*)root->FindDescendent(StrToID((LPCWSTR)L"ThemePageElem"));
 		page->SetSite(Site);
 		page->OnInit();
 	}
@@ -267,9 +267,9 @@ HRESULT STDMETHODCALLTYPE CElementProvider::OnNavigateAway()
 	// at microsoft properly fixing the issue, they just null out some fields in XProvider
 	// to prevent destroying a random memory address.
 
-	XProviderCP = NULL;
-	_RandomElement = NULL;
-	_RootElement = NULL;
+	_pprovCP = NULL;
+	_pe = NULL;
+	_peRoot = NULL;
 
 	return 0;
 }
@@ -277,9 +277,9 @@ HRESULT STDMETHODCALLTYPE CElementProvider::OnInnerElementDestroyed()
 {
 	//if (XProviderCP)
 	//{
-		XProviderCP = NULL;
-		_RootElement = NULL;
-		_RandomElement = NULL;
+	_pprovCP = NULL;
+	_peRoot = NULL;
+	_pe = NULL;
 	//}
 	return 0;
 }
