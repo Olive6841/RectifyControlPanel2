@@ -469,8 +469,11 @@ void RectifyMainPage::OnInit()
 				themetool_theme_release(theme);
 			}
 		}
-		else {
+		else
+		{
+#ifdef _DEBUG
 			MessageBox(NULL, TEXT("Failed to count the amount of themes"), TEXT("CElementProvider::LayoutInitialized"), MB_ICONERROR);
+#endif // DEBUG
 		}
 
 		if (version != NULL)

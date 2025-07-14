@@ -180,10 +180,13 @@ HRESULT STDMETHODCALLTYPE CElementProvider::OptionallyTakeInitialFocus(BOOL* res
 HRESULT STDMETHODCALLTYPE CElementProvider::LayoutInitialized()
 {
 	HRESULT hr = themetool_init();
+
+#ifdef _DEBUG	
 	if (hr != S_OK && hr != HRESULT_FROM_WIN32(ERROR_ALREADY_INITIALIZED))
 	{
 		MessageBox(NULL, TEXT("Failed to initialize SecureUXTheme ThemeTool. Theme information will not be loaded. This may be due to the lack of the ThemeDll.dll in C:\\Windows\\Rectify11\\RectifyControlPanel"), TEXT("CElementProvider::LayoutInitialized"), MB_ICONERROR);
 	}
+#endif
 
 	Element* root = XProvider::GetRoot();
 
