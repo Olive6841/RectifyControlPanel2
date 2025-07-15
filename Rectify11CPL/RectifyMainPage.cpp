@@ -307,9 +307,9 @@ void RectifyMainPage::InitNavLinks()
 		wcscpy_s(uninstallString, L"[ UNINSTALL ]");
 	}
 
-	links->AddLinkControlPanel(themePrefString, L"Rectify11.SettingsCPL", L"pageThemePref", CPNAV_Normal, NULL);
-	links->AddLinkShellEx(uninstallString, L"C:\\Windows\\Rectify11\\Uninstall.exe", L"", CPNAV_Normal, NULL);
-	links->AddLinkControlPanel(sysInfoString, L"Microsoft.System", L"", CPNAV_SomethingElse, NULL);
+	links->AddLinkControlPanel(themePrefString, L"Rectify11.SettingsCPL", L"pageThemePref", CPNAV_LIST_TASKS, NULL);
+	links->AddLinkShellEx(uninstallString, L"C:\\Windows\\Rectify11\\Uninstall.exe", L"", CPNAV_LIST_TASKS, NULL);
+	links->AddLinkControlPanel(sysInfoString, L"Microsoft.System", L"", CPNAV_LIST_SEEALSO, NULL);
 
 
 	GUID SID_PerLayoutPropertyBag = {};

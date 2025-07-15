@@ -2,25 +2,29 @@
 #include "CControlPanelNavLinkCommand.h"
 #include "CControlPanelNavLink.h"
 
-HRESULT __cdecl CControlPanelNavLink::Create(CPNAV_LIST list, CControlPanelNavLink** result)
+CControlPanelNavLink::CControlPanelNavLink(CPNAV_LIST list)
+	: _list(list)
+	, _pszName(NULL)
+	, _pszNameAcc(NULL)
+	, _hIcon(NULL)
+	, _fDisabled(false)
 {
-	CControlPanelNavLink* navLink = new CControlPanelNavLink();
-	if (navLink != NULL)
-	{
-		navLink->m_Icon = NULL;
-		navLink->m_Name = NULL;
-		navLink->m_ExecType.m_ExecType = CPNAVTYPE_None;
-		navLink->m_Type = list;
-		*result = navLink;
-		return S_OK;
-	}
-	else
-	{
-		return E_OUTOFMEMORY;
-	}
 }
 
-void CControlPanelNavLink::SetName(LPCWSTR name)
+CControlPanelNavLink::~CControlPanelNavLink()
 {
-	SHStrDupW(name, &this->m_Name);
+	CoTaskMemFree(_pszName);
+	CoTaskMemFree(_pszNameAcc);
+	DestroyIcon(_hIcon);
+}
+
+HRESULT CControlPanelNavLink::Create(CPNAV_LIST list, CControlPanelNavLink **ppLink)
+{
+	*ppLink = new (std::nothrow) CControlPanelNavLink(list);
+	return *ppLink != nullptr ? S_OK : E_OUTOFMEMORY;
+}
+
+void CControlPanelNavLink::SetName(LPCWSTR pszName)
+{
+	SHStrDupW(pszName, &_pszName);
 }

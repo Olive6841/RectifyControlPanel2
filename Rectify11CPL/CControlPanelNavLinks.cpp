@@ -55,12 +55,12 @@ HRESULT CControlPanelNavLinks::AddLinkShellEx(LPCWSTR name, LPCWSTR file, LPCWST
 
 		if (icon != NULL)
 		{
-			link->m_Icon = icon;
+			link->_hIcon = icon;
 		}
 
-		link->m_ExecType.m_ExecType = CPNAVTYPE_ShellExec;
-		SHStrDupW(file, &link->m_ExecType.m_AppletOrCommand);
-		SHStrDupW(arguments, &link->m_ExecType.m_Arguments);
+		link->_cmd._cmdType = CPNAV_CMDTYPE_SHELLEX;
+		SHStrDupW(file, &link->_cmd._pszAppletOrCommand);
+		SHStrDupW(arguments, &link->_cmd._pszAppletPageOrCommandParams);
 		return Add(link);
 	}
 	else
@@ -78,12 +78,12 @@ HRESULT CControlPanelNavLinks::AddLinkControlPanel(LPCWSTR name, LPCWSTR path, L
 
 		if (icon != NULL)
 		{
-			link->m_Icon = icon;
+			link->_hIcon = icon;
 		}
 
-		link->m_ExecType.m_ExecType = CPNAVTYPE_Navigate;
-		SHStrDupW(path, &link->m_ExecType.m_AppletOrCommand);
-		SHStrDupW(arguments, &link->m_ExecType.m_Arguments);
+		link->_cmd._cmdType = CPNAV_CMDTYPE_CONTROLPANEL;
+		SHStrDupW(path, &link->_cmd._pszAppletOrCommand);
+		SHStrDupW(arguments, &link->_cmd._pszAppletPageOrCommandParams);
 		return Add(link);
 	}
 	else

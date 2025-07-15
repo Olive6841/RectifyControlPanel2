@@ -29,16 +29,17 @@ public:
     virtual HRESULT STDMETHODCALLTYPE OnFolderChanged() = 0;
 };
 
-enum CPNAV_LIST : int {
-    CPNAV_Normal = 0,
-    CPNAV_SeeAlso = 1,
-    CPNAV_SomethingElse=2
+enum CPNAV_LIST : int
+{
+    CPNAV_LIST_TASKS = 0,
+    CPNAV_LIST_SEEALSO = 1,
 };
 
-enum CPNAVTYPE : int{
-    CPNAVTYPE_None = 0,
-    CPNAVTYPE_ShellExec = 1,
-    CPNAVTYPE_Navigate = 2
+enum CPNAV_CMDTYPE : int
+{
+    CPNAV_CMDTYPE_NOTIFY = 0,
+    CPNAV_CMDTYPE_SHELLEX = 1,
+    CPNAV_CMDTYPE_CONTROLPANEL = 2,
 };
 
 MIDL_INTERFACE("6FABDA16-031E-47E3-B2A2-2339C05CCB9E")

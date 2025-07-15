@@ -12,8 +12,8 @@ public:
 	HRESULT AddLinkShellEx(LPCWSTR name, LPCWSTR file, LPCWSTR arguments, CPNAV_LIST DisplayType, HICON icon);
 	HRESULT Add(CControlPanelNavLink* link);
 	virtual ~CControlPanelNavLinks();
+
 private:
 	HDPA m_dpaList;
 	long m_refCount;
 };
-
