@@ -10,3 +10,4 @@ Rectify11Installer/
 *.aps
 *.user
 /build
+/.idea

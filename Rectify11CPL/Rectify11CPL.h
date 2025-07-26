@@ -1,6 +1,10 @@
 //Core APIS
 #pragma once
+
+#define STRICT_TYPED_ITEMIDS
+
 #pragma comment(lib,"dui70.lib")
+
 #include <windows.h>
 #include <shlwapi.h>
 #include <objbase.h>
@@ -18,7 +22,9 @@
 #include <format>
 #include <functional>
 #include <filesystem>
+
 #include "..\dui70\DirectUI\DirectUI.h"
+
 using namespace DirectUI;
 using namespace std;
 namespace fs = std::filesystem;

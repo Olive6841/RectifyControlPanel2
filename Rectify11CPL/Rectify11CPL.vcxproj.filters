@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="ClassFactory.cpp" />
-    <ClCompile Include="ElementProvider.cpp" />
+    <ClCompile Include="FrameProvider.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="CControlPanelNavLink.cpp">
       <Filter>Navpane</Filter>
@@ -21,10 +21,20 @@
     <ClCompile Include="RectifyThemeCfgPage.cpp">
       <Filter>Pages</Filter>
     </ClCompile>
+    <ClCompile Include="FocusIndicator.cpp" />
+    <ClCompile Include="CElementWithIUnknown.cpp" />
+    <ClCompile Include="CElementWithSite.cpp" />
+    <ClCompile Include="CControlPanelPage.cpp">
+      <Filter>Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="DuiUtil.cpp" />
+    <ClCompile Include="undoc.cpp" />
+    <ClCompile Include="NavigateButton.cpp" />
+    <ClCompile Include="FrameModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassFactory.h" />
-    <ClInclude Include="ElementProvider.h" />
+    <ClInclude Include="FrameProvider.h" />
     <ClInclude Include="Rectify11CPL.h" />
     <ClInclude Include="Guid.h" />
     <ClInclude Include="undoc.h" />
@@ -48,6 +58,17 @@
       <Filter>Pages</Filter>
     </ClInclude>
     <ClInclude Include="dllmain.h" />
+    <ClInclude Include="FocusIndicator.h" />
+    <ClInclude Include="DuiUtil.h" />
+    <ClInclude Include="SHFusion.h" />
+    <ClInclude Include="CElementWithIUnknown.h" />
+    <ClInclude Include="CElementWithSite.h" />
+    <ClInclude Include="ResultUtils.h" />
+    <ClInclude Include="CControlPanelPage.h">
+      <Filter>Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameModule.h" />
+    <ClInclude Include="NavigateButton.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Rectify11CPL.rc" />

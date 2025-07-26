@@ -8,6 +8,7 @@ typedef struct _SQM_STREAM_ENTRY
 		WCHAR *pwszVal;
 		DWORD dwVal;
 	} val;
+
 } SQM_STREAM_ENTRY, *PSQM_STREAM_ENTRY;
 
 class CControlPanelNavLinkCommand

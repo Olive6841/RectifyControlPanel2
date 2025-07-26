@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -199,16 +199,24 @@
   <ItemGroup>
     <ClCompile Include="CControlPanelNavLink.cpp" />
     <ClCompile Include="CControlPanelNavLinks.cpp" />
+    <ClCompile Include="CControlPanelPage.cpp" />
+    <ClCompile Include="CElementWithIUnknown.cpp" />
+    <ClCompile Include="CElementWithSite.cpp" />
     <ClCompile Include="ClassFactory.cpp" />
+    <ClCompile Include="DuiUtil.cpp" />
+    <ClCompile Include="FocusIndicator.cpp" />
+    <ClCompile Include="FrameModule.cpp" />
+    <ClCompile Include="NavigateButton.cpp" />
     <ClCompile Include="RectifyMainPage.cpp" />
     <ClCompile Include="CRectifyUtil.cpp" />
     <ClCompile Include="IRectifyUtil_p.c" />
     <ClCompile Include="proxy.c" />
-    <ClCompile Include="ElementProvider.cpp" />
+    <ClCompile Include="FrameProvider.cpp" />
     <ClCompile Include="ElevationManager.cpp" />
     <ClCompile Include="RectifyThemeCfgPage.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="theme.cpp" />
+    <ClCompile Include="undoc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Rectify11CPL.def" />
@@ -218,15 +226,24 @@
     <ClInclude Include="CControlPanelNavLink.h" />
     <ClInclude Include="CControlPanelNavLinkCommand.h" />
     <ClInclude Include="CControlPanelNavLinks.h" />
+    <ClInclude Include="CControlPanelPage.h" />
+    <ClInclude Include="CElementWithIUnknown.h" />
+    <ClInclude Include="CElementWithSite.h" />
     <ClInclude Include="ClassFactory.h" />
     <ClInclude Include="dllmain.h" />
+    <ClInclude Include="DuiUtil.h" />
+    <ClInclude Include="FocusIndicator.h" />
+    <ClInclude Include="FrameModule.h" />
+    <ClInclude Include="NavigateButton.h" />
     <ClInclude Include="RectifyMainPage.h" />
     <ClInclude Include="CRectifyUtil.h" />
-    <ClInclude Include="ElementProvider.h" />
+    <ClInclude Include="FrameProvider.h" />
     <ClInclude Include="ElevationManager.h" />
     <ClInclude Include="Rectify11CPL.h" />
     <ClInclude Include="Guid.h" />
     <ClInclude Include="RectifyThemeCfgPage.h" />
+    <ClInclude Include="ResultUtils.h" />
+    <ClInclude Include="SHFusion.h" />
     <ClInclude Include="theme.h" />
     <ClInclude Include="undoc.h" />
     <ClInclude Include="resource.h" />

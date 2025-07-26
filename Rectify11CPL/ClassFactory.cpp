@@ -1,7 +1,8 @@
 #include <shlobj.h>
 #include <shlwapi.h>
 #include "Rectify11CPL.h"
-#include "ElementProvider.h"
+
+#include "FrameProvider.h"
 #include "ClassFactory.h"
 #include "Guid.h"
 #include "RectifyMainPage.h"
@@ -44,15 +45,19 @@ DWORD CFolderViewImplClassFactory::Release()
 HRESULT CElementProvider_CreateInstance(__in REFIID riid, __deref_out void** ppv)
 {
     HRESULT hr = S_ALLTHRESHOLD;
-    CElementProvider* pElementProvider = new CElementProvider();
+    FrameProvider *pElementProvider = new FrameProvider(nullptr, NULL);
     hr = pElementProvider ? S_OK : E_OUTOFMEMORY;
     if (SUCCEEDED(hr))
     {
-        hr = pElementProvider->QueryInterface(riid, ppv);
+		hr = pElementProvider->Init();
+        if (SUCCEEDED(hr))
+        {
+            hr = pElementProvider->QueryInterface(riid, ppv);
 
-        DirectUI::ClassInfo<RectifyMainPage, DirectUI::Element>::RegisterGlobal(g_hInst, L"RectifyMainPage", 0, NULL);
-		DirectUI::ClassInfo<RectifyThemeCfgPage, DirectUI::Element>::RegisterGlobal(g_hInst, L"RectifyThemeCfgPage", 0, NULL);
-        pElementProvider->Release();
+            DirectUI::ClassInfo<RectifyMainPage, DirectUI::Element>::RegisterGlobal(g_hInst, L"RectifyMainPage", 0, NULL);
+            DirectUI::ClassInfo<RectifyThemeCfgPage, DirectUI::Element>::RegisterGlobal(g_hInst, L"RectifyThemeCfgPage", 0, NULL);
+            pElementProvider->Release();
+        }
     }
     return hr;
 }

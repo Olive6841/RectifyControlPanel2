@@ -1,4 +1,5 @@
 #pragma once
+
 extern HINSTANCE g_hInst;
 
 void DllAddRef();

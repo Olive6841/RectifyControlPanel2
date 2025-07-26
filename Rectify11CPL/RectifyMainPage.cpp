@@ -57,8 +57,8 @@ void RectifyMainPage::OnEvent(Event* iev)
 				RectifyUtil = utility;
 				HasAdmin = TRUE;
 
-				ULONG key = 0;
-				this->StartDefer(&key);
+				DWORD dwDefer = 0;
+				Element::StartDefer(&dwDefer);
 				iev->peTarget->SetLayoutPos(-3);
 				iev->peTarget->SetVisible(FALSE);
 				ThemetoolInstall->SetEnabled(TRUE);
@@ -74,13 +74,21 @@ void RectifyMainPage::OnEvent(Event* iev)
 				CCRadioButton* Classic = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"Classic"));
 				CCRadioButton* ClassicTransparent = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"ClassicTransparent"));
 
-				CCRadioButton* Options[] = { Win11DefaultMenus, NilesoftSmall, NilesoftFull, Classic, ClassicTransparent };
+				CCRadioButton *Options[] =
+				{
+					Win11DefaultMenus,
+					NilesoftSmall,
+					NilesoftFull,
+					Classic,
+					ClassicTransparent
+				};
+
 				for (size_t i = 0; i < 5; i++)
 				{
 					Options[i]->SetEnabled(TRUE);
 				}
 
-				this->EndDefer(key);
+				Element::EndDefer(dwDefer);
 			}
 		}
 	}

@@ -10,6 +10,7 @@
 #pragma comment(lib, "shlwapi.lib")
 
 #include "Rectify11CPL.h"
+
 #define CONTROLPANEL_NAMESPACE_GUID L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ControlPanel\\NameSpace\\%s"
 #define SHELL_EXT_APPROVED        L"Software\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Approved\\%s"
 
