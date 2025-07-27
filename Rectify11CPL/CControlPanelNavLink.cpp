@@ -24,7 +24,47 @@ HRESULT CControlPanelNavLink::Create(CPNAV_LIST list, CControlPanelNavLink **ppL
 	return *ppLink != nullptr ? S_OK : E_OUTOFMEMORY;
 }
 
-void CControlPanelNavLink::SetName(LPCWSTR pszName)
+HRESULT CControlPanelNavLink::SetName(HINSTANCE hInstance, UINT nResId)
 {
-	SHStrDupW(pszName, &_pszName);
+	WCHAR szName[MAX_PATH];
+	HRESULT hr = LoadString(hInstance, nResId, szName, ARRAYSIZE(szName)) != 0 ? S_OK : E_FAIL;
+	if (SUCCEEDED(hr))
+	{
+		hr = SetName(szName);
+	}
+
+	return hr;
+}
+
+HRESULT CControlPanelNavLink::SetName(LPCWSTR pszName)
+{
+	return SHStrDup(pszName, &_pszName);
+}
+
+HRESULT CControlPanelNavLink::SetNameAcc(HINSTANCE hInstance, UINT nResId)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT CControlPanelNavLink::SetNameAcc(LPCWSTR pszNameAcc)
+{
+	return SHStrDup(pszNameAcc, &_pszNameAcc);
+}
+
+HRESULT CControlPanelNavLink::SetIcon(HICON hIcon)
+{
+	_hIcon = hIcon;
+	return S_OK;
+}
+
+HRESULT CControlPanelNavLink::SetIcon(HINSTANCE hInstance, int nIconId)
+{
+	SHSTOCKICONINFO sii = { sizeof(sii) };
+	HRESULT hr = SHGetStockIconInfo(SHSTOCKICONID(nIconId), (SHGFI_SMALLICON | SHGFI_ICON), &sii);
+	if (SUCCEEDED(hr))
+	{
+		hr = SetIcon(sii.hIcon);
+	}
+
+	return hr;
 }

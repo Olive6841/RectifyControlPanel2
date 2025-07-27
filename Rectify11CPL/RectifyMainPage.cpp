@@ -297,7 +297,7 @@ void RectifyMainPage::UpdateThemeGraphic()
 
 void RectifyMainPage::InitNavLinks()
 {
-	auto links = new CControlPanelNavLinks();
+	auto pLinks = new CControlPanelNavLinks();
 
 	WCHAR themePrefString[1024];
 	if (FAILED(LoadStringW(g_hInst, IDS_UPDATE, themePrefString, 1023)))
@@ -315,9 +315,9 @@ void RectifyMainPage::InitNavLinks()
 		wcscpy_s(uninstallString, L"[ UNINSTALL ]");
 	}
 
-	links->AddLinkControlPanel(themePrefString, L"Rectify11.SettingsCPL", L"pageThemePref", CPNAV_LIST_TASKS, NULL);
-	links->AddLinkShellEx(uninstallString, L"C:\\Windows\\Rectify11\\Uninstall.exe", L"", CPNAV_LIST_TASKS, NULL);
-	links->AddLinkControlPanel(sysInfoString, L"Microsoft.System", L"", CPNAV_LIST_SEEALSO, NULL);
+	pLinks->AddLinkControlPanel(CPNAV_LIST_TASKS, g_hInst, IDS_UPDATE, L"Rectify11.SettingsCPL", L"pageThemePref", NULL);
+	pLinks->AddLinkShellEx(CPNAV_LIST_TASKS, g_hInst, IDS_UNINSTALL, L"C:\\Windows\\Rectify11\\Uninstall.exe", L"", NULL);
+	pLinks->AddLinkControlPanel(CPNAV_LIST_SEEALSO, g_hInst, IDS_SYSINFO, L"Microsoft.System", L"", NULL);
 
 
 	GUID SID_PerLayoutPropertyBag = {};
@@ -328,7 +328,7 @@ void RectifyMainPage::InitNavLinks()
 		int hr = IUnknown_QueryService(site, SID_PerLayoutPropertyBag, IID_IPropertyBag, (LPVOID*)&bag);
 		if (SUCCEEDED(hr))
 		{
-			if (SUCCEEDED(PSPropertyBag_WriteUnknown(bag, L"ControlPanelNavLinks", links)))
+			if (SUCCEEDED(PSPropertyBag_WriteUnknown(bag, L"ControlPanelNavLinks", pLinks)))
 			{
 
 			}

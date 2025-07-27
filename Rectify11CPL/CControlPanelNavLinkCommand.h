@@ -35,6 +35,41 @@ public:
 		delete[] _sqmStreamInfo.pSqmStreamEntries;
 	}
 
+	void SetType(CPNAV_CMDTYPE cmdType)
+	{
+		_cmdType = cmdType;
+	}
+
+	void SetId(int nId)
+	{
+		_nId = nId;
+	}
+
+	void SetSQMStream(DWORD dwDatapointId, DWORD cSqmStreamEntries, SQM_STREAM_ENTRY *pSqmStreamEntries)
+	{
+		_sqmStreamInfo.dwDatapointId = dwDatapointId;
+		_sqmStreamInfo.cSqmStreamEntries = cSqmStreamEntries;
+		_sqmStreamInfo.pSqmStreamEntries = pSqmStreamEntries;
+	}
+
+	HRESULT SetAppletOrCommand(LPCWSTR pszAppletOrCommand, LPCWSTR pszAppletPageOrCommandParams)
+	{
+		HRESULT hr = SHStrDup(pszAppletOrCommand, &_pszAppletOrCommand);
+		if (SUCCEEDED(hr) && pszAppletPageOrCommandParams)
+		{
+			hr = SHStrDup(pszAppletPageOrCommandParams, &_pszAppletPageOrCommandParams);
+		}
+
+		return hr;
+	}
+
+	CControlPanelNavLinkCommand *Copy();
+
+	void LogRecentItems()
+	{
+		_fLogRecentItems = true;
+	}
+
 	struct SQM_STREAM_INFO
 	{
 		DWORD dwDatapointId;
@@ -42,6 +77,7 @@ public:
 		SQM_STREAM_ENTRY *pSqmStreamEntries;
 	};
 
+private:
 	CPNAV_CMDTYPE _cmdType;
 	int _nId;
 	LPWSTR _pszAppletOrCommand;

@@ -4,21 +4,26 @@
 #include "CControlPanelNavLinkCommand.h"
 
 CControlPanelNavLinks::CControlPanelNavLinks()
+	: _hdpaNavLinks(NULL)
+	  , _cRef(1)
 {
-	m_dpaList = NULL;
-	m_refCount = 1;
 }
 
-void NavLinksDPA_DeleteCB(CControlPanelNavLink* p, void* pData)
+int CALLBACK NavLinksDPA_DeleteCB(CControlPanelNavLink *pLink, void *pData)
 {
-	delete p;
+	if (pLink)
+	{
+		delete pLink;
+	}
+	return 1;
 }
 
 CControlPanelNavLinks::~CControlPanelNavLinks()
 {
-	if (this->m_dpaList != NULL) {
-		DPA_DestroyCallback(this->m_dpaList, (PFNDAENUMCALLBACKCONST)NavLinksDPA_DeleteCB, NULL);
-		this->m_dpaList = NULL;
+	if (!_hdpaNavLinks == NULL)
+	{
+		DPA_DestroyCallback(_hdpaNavLinks, (PFNDAENUMCALLBACKCONST)NavLinksDPA_DeleteCB, NULL);
+		_hdpaNavLinks = NULL;
 	}
 }
 
@@ -32,82 +37,146 @@ IFACEMETHODIMP CControlPanelNavLinks::QueryInterface(REFIID riid, __out void** p
 	}
 	return E_NOINTERFACE;
 }
+
 IFACEMETHODIMP_(ULONG) CControlPanelNavLinks::AddRef()
 {
-	return InterlockedIncrement(&m_refCount);
+	return InterlockedIncrement(&_cRef);
 }
+
 IFACEMETHODIMP_(ULONG) CControlPanelNavLinks::Release()
 {
-	ULONG ref = InterlockedDecrement(&m_refCount);
+	ULONG ref = InterlockedDecrement(&_cRef);
 	if (ref == 0)
 	{
 		delete this;
 	}
 	return ref;
 }
-HRESULT CControlPanelNavLinks::AddLinkShellEx(LPCWSTR name, LPCWSTR file, LPCWSTR arguments, CPNAV_LIST DisplayType, HICON icon)
+
+HRESULT CControlPanelNavLinks::AddLinkNotify(CPNAV_LIST list, HINSTANCE hInstance, UINT nNameResId, int nLinkId, CControlPanelNavLink **ppLink)
 {
-	CControlPanelNavLink* link = NULL;
-	HRESULT hr = CControlPanelNavLink::Create(DisplayType, &link);
+	if (ppLink)
+		*ppLink = nullptr;
+
+	CControlPanelNavLink *pLink;
+	HRESULT hr = CControlPanelNavLink::Create(list, &pLink);
 	if (SUCCEEDED(hr))
 	{
-		link->SetName(name);
-
-		if (icon != NULL)
+		hr = pLink->SetName(hInstance, nNameResId);
+		if (SUCCEEDED(hr))
 		{
-			link->_hIcon = icon;
+			pLink->GetCommand()->SetType(CPNAV_CMDTYPE_NOTIFY);
+			if (nLinkId <= 0)
+			{
+				hr = E_INVALIDARG;
+			}
+			else
+			{
+				pLink->GetCommand()->SetId(nLinkId);
+				hr = Add(pLink);
+				if (SUCCEEDED(hr))
+				{
+					if (ppLink)
+						*ppLink = pLink;
+					pLink = nullptr;
+				}
+			}
 		}
+	}
 
-		link->_cmd._cmdType = CPNAV_CMDTYPE_SHELLEX;
-		SHStrDupW(file, &link->_cmd._pszAppletOrCommand);
-		SHStrDupW(arguments, &link->_cmd._pszAppletPageOrCommandParams);
-		return Add(link);
-	}
-	else
+	if (pLink)
 	{
-		return hr;
+		delete pLink;
 	}
+
+	return hr;
 }
-HRESULT CControlPanelNavLinks::AddLinkControlPanel(LPCWSTR name, LPCWSTR path, LPCWSTR arguments, CPNAV_LIST DisplayType, HICON icon)
+
+HRESULT CControlPanelNavLinks::AddLinkShellEx(CPNAV_LIST list, HINSTANCE hInstance, UINT nNameResId, LPCWSTR pszCommand, LPCWSTR pszParams, CControlPanelNavLink **ppLink)
 {
-	CControlPanelNavLink* link = NULL;
-	HRESULT hr = CControlPanelNavLink::Create(DisplayType, &link);
+	if (ppLink)
+		*ppLink = nullptr;
+
+	CControlPanelNavLink *pLink;
+	HRESULT hr = CControlPanelNavLink::Create(list, &pLink);
 	if (SUCCEEDED(hr))
 	{
-		link->SetName(name);
-
-		if (icon != NULL)
+		hr = pLink->SetName(hInstance, nNameResId);
+		if (SUCCEEDED(hr))
 		{
-			link->_hIcon = icon;
+			hr = pLink->SetCommandShellEx(pszCommand, pszParams);
+			if (SUCCEEDED(hr))
+			{
+				hr = Add(pLink);
+				if (SUCCEEDED(hr))
+				{
+					if (ppLink)
+						*ppLink = pLink;
+					pLink = nullptr;
+				}
+			}
 		}
+	}
 
-		link->_cmd._cmdType = CPNAV_CMDTYPE_CONTROLPANEL;
-		SHStrDupW(path, &link->_cmd._pszAppletOrCommand);
-		SHStrDupW(arguments, &link->_cmd._pszAppletPageOrCommandParams);
-		return Add(link);
-	}
-	else
+	if (pLink)
 	{
-		return hr;
+		delete pLink;
 	}
+
+	return hr;
 }
 
-HRESULT CControlPanelNavLinks::Add(CControlPanelNavLink* link)
+HRESULT CControlPanelNavLinks::AddLinkControlPanel(CPNAV_LIST list, HINSTANCE hInstance, UINT nNameResId, LPCWSTR pszApplet, LPCWSTR pszAppletPage, CControlPanelNavLink **ppLink)
 {
-	if (m_dpaList == NULL)
+	if (ppLink)
+		*ppLink = 0;
+
+	CControlPanelNavLink *pLink;
+	HRESULT hr = CControlPanelNavLink::Create(list, &pLink);
+	if (hr >= 0)
 	{
-		m_dpaList = DPA_Create(10);
-		if (m_dpaList == NULL)
+		hr = pLink->SetName(hInstance, nNameResId);
+		if (SUCCEEDED(hr))
 		{
-			return E_OUTOFMEMORY;
+			hr = pLink->SetCommandControlPanel(pszApplet, pszAppletPage, list == CPNAV_LIST_SEEALSO);
+			if (SUCCEEDED(hr))
+			{
+				hr = Add(pLink);
+				if (SUCCEEDED(hr))
+				{
+					if (ppLink)
+						*ppLink = pLink;
+					pLink = nullptr;
+				}
+			}
 		}
 	}
-	if (DPA_InsertPtr(m_dpaList, 0x7fffffff, link) != -1)
+
+	if (pLink)
 	{
-		return S_OK;
+		delete pLink;
 	}
-	else
+
+	return hr;
+}
+
+HRESULT CControlPanelNavLinks::Add(CControlPanelNavLink *pLink)
+{
+	HRESULT hr = S_OK;
+
+	if (!_hdpaNavLinks)
 	{
-		return E_OUTOFMEMORY;
+		_hdpaNavLinks = DPA_Create(10);
+		if (!DPA_Create(10))
+		{
+			hr = E_OUTOFMEMORY;
+		}
 	}
+
+	if (DPA_AppendPtr(_hdpaNavLinks, pLink) == -1)
+	{
+		hr = E_OUTOFMEMORY;
+	}
+
+	return hr;
 }

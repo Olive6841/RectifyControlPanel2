@@ -5,16 +5,19 @@ class CControlPanelNavLinks : public IUnknown
 public:
 	CControlPanelNavLinks();
 
-	IFACEMETHODIMP QueryInterface(REFIID riid, __out void** ppv);
+	IFACEMETHODIMP QueryInterface(REFIID riid, __out void **ppv);
 	IFACEMETHODIMP_(ULONG) AddRef();
 	IFACEMETHODIMP_(ULONG) Release();
 
-	HRESULT AddLinkControlPanel(LPCWSTR name, LPCWSTR path, LPCWSTR arguments, CPNAV_LIST DisplayType, HICON icon);
-	HRESULT AddLinkShellEx(LPCWSTR name, LPCWSTR file, LPCWSTR arguments, CPNAV_LIST DisplayType, HICON icon);
-	HRESULT Add(CControlPanelNavLink* link);
+	HRESULT Add(CControlPanelNavLink *pLink);
+	HRESULT AddLinkNotify(CPNAV_LIST list, HINSTANCE hInstance, UINT nNameResId, int nLinkId, CControlPanelNavLink **ppLink);
+	HRESULT AddLinkShellEx(CPNAV_LIST list, HINSTANCE hInstance, UINT nNameResId, LPCWSTR pszCommand, LPCWSTR pszParams, CControlPanelNavLink **ppLink);
+	HRESULT AddLinkControlPanel(CPNAV_LIST list, HINSTANCE hInstance, UINT nNameResId, LPCWSTR pszApplet, LPCWSTR pszAppletPage, CControlPanelNavLink **ppLink);
+
+protected:
 	virtual ~CControlPanelNavLinks();
 
 private:
-	HDPA m_dpaList;
-	long m_refCount;
+	HDPA _hdpaNavLinks;
+	long _cRef;
 };
