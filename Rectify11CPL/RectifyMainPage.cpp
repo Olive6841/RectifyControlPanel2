@@ -8,11 +8,11 @@
 #include "DuiUtil.h"
 #include <new>
 
-IClassInfo* RectifyMainPage::Class = NULL;
-
+IClassInfo *RectifyMainPage::Class = NULL;
 
 RectifyMainPage::RectifyMainPage()
-	: HasAdmin(false)
+	: _punkSite(nullptr)
+	, HasAdmin(false)
 	, RectifyUtil(nullptr)
 	, initializing(true)
 {
@@ -21,11 +21,6 @@ RectifyMainPage::RectifyMainPage()
 RectifyMainPage::~RectifyMainPage()
 {
 
-}
-
-HRESULT RectifyMainPage::Create(Element* pParent, DWORD* pdwDeferCookie, Element** ppElement)
-{
-	return CreateAndInit<RectifyMainPage, int>(0, pParent, pdwDeferCookie, ppElement);
 }
 
 HRESULT RectifyMainPage::Register()
@@ -39,7 +34,17 @@ HRESULT RectifyMainPage::Register()
 	return hr;
 }
 
-void RectifyMainPage::OnEvent(Event* iev)
+HRESULT RectifyMainPage::Create(Element *pParent, DWORD *pdwDeferCookie, Element **ppElement)
+{
+	return CreateAndInit<RectifyMainPage, int>(0, pParent, pdwDeferCookie, ppElement);
+}
+
+IClassInfo *RectifyMainPage::GetClassInfo()
+{
+	return Class;
+}
+
+void RectifyMainPage::OnEvent(Event *iev)
 {
 	if (iev->nStage != GMF_BUBBLED)
 		return;
@@ -51,10 +56,10 @@ void RectifyMainPage::OnEvent(Event* iev)
 	{
 		if (iev->uidType == TouchButton::Click)
 		{
-			IRectifyUtil* utility = ElevationManager::Initialize(GetMainHwnd());
-			TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"MicaChk"));
-			TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"TabChk"));
-			TouchButton* ThemetoolInstall = (TouchButton*)FindDescendent(StrToID((LPCWSTR)L"ThemetoolInstall"));
+			IRectifyUtil *utility = ElevationManager::Initialize(GetMainHwnd());
+			TouchCheckBox *MicaForEveryoneCheckbox = (TouchCheckBox *)FindDescendent(StrToID((LPCWSTR)L"MicaChk"));
+			TouchCheckBox *TabbedCheckbox = (TouchCheckBox *)FindDescendent(StrToID((LPCWSTR)L"TabChk"));
+			TouchButton *ThemetoolInstall = (TouchButton *)FindDescendent(StrToID((LPCWSTR)L"ThemetoolInstall"));
 			if (utility != NULL)
 			{
 				// Destroy old class
@@ -77,11 +82,11 @@ void RectifyMainPage::OnEvent(Event* iev)
 					TabbedCheckbox->SetEnabled(TRUE);
 
 
-				CCRadioButton* Win11DefaultMenus = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"Win11DefaultMenus"));
-				CCRadioButton* NilesoftSmall = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"NilesoftSmall"));
-				CCRadioButton* NilesoftFull = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"NilesoftFull"));
-				CCRadioButton* Classic = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"Classic"));
-				CCRadioButton* ClassicTransparent = (CCRadioButton*)FindDescendent(StrToID((LPCWSTR)L"ClassicTransparent"));
+				CCRadioButton *Win11DefaultMenus = (CCRadioButton *)FindDescendent(StrToID((LPCWSTR)L"Win11DefaultMenus"));
+				CCRadioButton *NilesoftSmall = (CCRadioButton *)FindDescendent(StrToID((LPCWSTR)L"NilesoftSmall"));
+				CCRadioButton *NilesoftFull = (CCRadioButton *)FindDescendent(StrToID((LPCWSTR)L"NilesoftFull"));
+				CCRadioButton *Classic = (CCRadioButton *)FindDescendent(StrToID((LPCWSTR)L"Classic"));
+				CCRadioButton *ClassicTransparent = (CCRadioButton *)FindDescendent(StrToID((LPCWSTR)L"ClassicTransparent"));
 
 				CCRadioButton *Options[] =
 				{
@@ -116,9 +121,9 @@ void RectifyMainPage::OnEvent(Event* iev)
 	{
 		if (iev->uidType == Combobox::SelectionChange)
 		{
-			TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"MicaChk"));
-			TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)FindDescendent(StrToID((LPCWSTR)L"TabChk"));
-			int selection = ((Combobox*)iev->peTarget)->GetSelection();
+			TouchCheckBox *MicaForEveryoneCheckbox = (TouchCheckBox *)FindDescendent(StrToID((LPCWSTR)L"MicaChk"));
+			TouchCheckBox *TabbedCheckbox = (TouchCheckBox *)FindDescendent(StrToID((LPCWSTR)L"TabChk"));
+			int selection = ((Combobox *)iev->peTarget)->GetSelection();
 
 			ULONG apply_flags = 0;
 
@@ -199,9 +204,9 @@ void RectifyMainPage::OnEvent(Event* iev)
 	}
 	else if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"MicaChk"))
 	{
-		TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)iev->peTarget;
-		TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)GetRoot()->FindDescendent(StrToID((LPCWSTR)L"TabChk"));
-		Combobox* ThemeCombo = (Combobox*)GetRoot()->FindDescendent(StrToID((LPCWSTR)L"ThemeCmb"));
+		TouchCheckBox *MicaForEveryoneCheckbox = (TouchCheckBox *)iev->peTarget;
+		TouchCheckBox *TabbedCheckbox = (TouchCheckBox *)GetRoot()->FindDescendent(StrToID((LPCWSTR)L"TabChk"));
+		Combobox *ThemeCombo = (Combobox *)GetRoot()->FindDescendent(StrToID((LPCWSTR)L"ThemeCmb"));
 		if (iev->uidType == TouchButton::Click)
 		{
 			CheckedStateFlags MicaEnabled2 = MicaForEveryoneCheckbox->GetCheckedState();
@@ -216,8 +221,8 @@ void RectifyMainPage::OnEvent(Event* iev)
 	}
 	else if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"TabChk"))
 	{
-		TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)iev->peTarget;
-		Combobox* ThemeCombo = (Combobox*)FindDescendent(StrToID((LPCWSTR)L"ThemeCmb"));
+		TouchCheckBox *TabbedCheckbox = (TouchCheckBox *)iev->peTarget;
+		Combobox *ThemeCombo = (Combobox *)FindDescendent(StrToID((LPCWSTR)L"ThemeCmb"));
 
 		if (iev->uidType == TouchButton::Click)
 		{
@@ -241,9 +246,9 @@ void RectifyMainPage::OnEvent(Event* iev)
 		iev->peTarget->SetEnabled(TRUE);
 	}
 	// handle menu section
-	if (iev->uidType == Button::Click && !wcscmp((const wchar_t*)iev->peTarget->GetClassInfoW()->GetName(), (const wchar_t*)CCRadioButton::GetClassInfoPtr()->GetName()))
+	if (iev->uidType == Button::Click && !wcscmp((const wchar_t *)iev->peTarget->GetClassInfoW()->GetName(), (const wchar_t *)CCRadioButton::GetClassInfoPtr()->GetName()))
 	{
-		CCRadioButton* chkbox = (CCRadioButton*)iev->peTarget;
+		CCRadioButton *chkbox = (CCRadioButton *)iev->peTarget;
 		if (chkbox->GetSelected())
 		{
 			HRESULT hr = E_ACTIVATIONDENIED_SHELLERROR;
@@ -284,7 +289,7 @@ void RectifyMainPage::OnEvent(Event* iev)
 
 void RectifyMainPage::ShowRestartExplorer()
 {
-	TouchButton* BtnRestartExplorer = (TouchButton*)FindDescendent(StrToID((LPCWSTR)L"BtnRestartExplorer"));
+	TouchButton *BtnRestartExplorer = (TouchButton *)FindDescendent(StrToID((LPCWSTR)L"BtnRestartExplorer"));
 	BtnRestartExplorer->SetLayoutPos(0);
 	BtnRestartExplorer->SetVisible(TRUE);
 }
@@ -297,8 +302,8 @@ void RectifyMainPage::UpdateThemeGraphic()
 	{
 		return;
 	}
-	Value* bitmap = DirectUI::Value::CreateGraphic(bmp, 3, 0xffffffff, false, false, false);
-	Element* PreviewElement = FindDescendent(StrToID((LPCWSTR)L"ThemePreview"));
+	Value *bitmap = DirectUI::Value::CreateGraphic(bmp, 3, 0xffffffff, false, false, false);
+	Element *PreviewElement = FindDescendent(StrToID((LPCWSTR)L"ThemePreview"));
 	if (PreviewElement != NULL)
 		PreviewElement->SetValue(Element::ContentProp, 1, bitmap);
 	bitmap->Release();
@@ -333,14 +338,14 @@ void RectifyMainPage::InitNavLinks()
 	HRESULT hr = CLSIDFromString(L"{a46e5c25-c09c-4ca8-9a53-49cf7f865525}", (LPCLSID)&SID_PerLayoutPropertyBag);
 	if (SUCCEEDED(hr))
 	{
-		IPropertyBag* bag = NULL;
-		hr = IUnknown_QueryService(_punkSite, SID_PerLayoutPropertyBag, IID_IPropertyBag, (LPVOID*)&bag);
+		IPropertyBag *bag = NULL;
+		hr = IUnknown_QueryService(_punkSite, SID_PerLayoutPropertyBag, IID_IPropertyBag, (LPVOID *)&bag);
 		if (SUCCEEDED(hr))
 		{
 			hr = PSPropertyBag_WriteUnknown(bag, L"ControlPanelNavLinks", pLinks);
 			if (SUCCEEDED(hr))
 			{
-
+				hr = S_OK;
 			}
 			else
 			{
@@ -361,7 +366,7 @@ void RectifyMainPage::InitNavLinks()
 
 void RectifyMainPage::UpdateThemetoolStatus()
 {
-	Element* status = (TouchButton*)FindDescendent(StrToID((LPCWSTR)L"ThemetoolStatus"));
+	Element *status = (TouchButton *)FindDescendent(StrToID((LPCWSTR)L"ThemetoolStatus"));
 
 	ULONG flags = secureuxtheme_get_state_flags();
 	wstring statusText;
@@ -413,11 +418,11 @@ void RectifyMainPage::UpdateThemetoolStatus()
 	status->SetContentString((LPCWSTR)statusText.c_str());
 }
 
-IFACEMETHODIMP RectifyMainPage::QueryInterface(REFIID riid, void** ppv)
+IFACEMETHODIMP RectifyMainPage::QueryInterface(REFIID riid, void **ppv)
 {
 	static const QITAB qit[] =
 	{
-		QITABENT(RectifyMainPage, IFrameNotificationClient),
+		QITABENT(CControlPanelPage, IFrameNotificationClient),
 		{ 0 },
 	};
 
@@ -432,26 +437,42 @@ IFACEMETHODIMP RectifyMainPage::QueryInterface(REFIID riid, void** ppv)
 
 HRESULT RectifyMainPage::LayoutInitialized()
 {
-	Element* root = GetRoot();
-	RectifyUtil = (IRectifyUtil*)new CRectifyUtil();
+	CControlPanelPage::LayoutInitialized();
+
+	HRESULT hr = IUnknown_GetSite(static_cast<IObjectWithSite *>(this), IID_PPV_ARGS(&_punkSite));
+	if (SUCCEEDED(hr))
+	{
+		DUI_WalkIUnknownElements(this, (PFNELEMENTCALLBACK)DUI_SetSiteOnUnknown, (LPARAM)_punkSite);
+	}
+
+	hr = themetool_init();
+	if (hr != S_OK && hr != HRESULT_FROM_WIN32(ERROR_ALREADY_INITIALIZED))
+	{
+#ifdef ERROR_MESSAGES
+		MessageBox(NULL, TEXT("Failed to initialize SecureUXTheme ThemeTool. Theme information will not be loaded. This may be due to the lack of the ThemeDll.dll in C:\\Windows\\Rectify11\\RectifyControlPanel"), TEXT("FrameProvider::LayoutInitialized"), MB_ICONERROR);
+#endif
+	}
+
+	Element *root = GetRoot();
+	RectifyUtil = (IRectifyUtil *)new CRectifyUtil();
 	InitNavLinks();
 
-	Combobox* ThemeCombo = (Combobox*)root->FindDescendent(StrToID((LPCWSTR)L"ThemeCmb"));
-	Button* HelpButton = (Button*)root->FindDescendent(StrToID((LPCWSTR)L"buttonHelp"));
-	TouchCheckBox* MicaForEveryoneCheckbox = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"MicaChk"));
-	TouchCheckBox* TabbedCheckbox = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"TabChk"));
-	Element* version = (Element*)root->FindDescendent(StrToID((LPCWSTR)L"RectifyVersion"));
-	TouchButton* enableAdmin = (TouchButton*)root->FindDescendent(StrToID((LPCWSTR)L"Link_EnableAdmin"));
-	TouchButton* BtnRestartExplorer = (TouchButton*)root->FindDescendent(StrToID((LPCWSTR)L"BtnRestartExplorer"));
-	TouchButton* ThemetoolInstall = (TouchButton*)root->FindDescendent(StrToID((LPCWSTR)L"ThemetoolInstall"));
+	Combobox *ThemeCombo = (Combobox *)root->FindDescendent(StrToID((LPCWSTR)L"ThemeCmb"));
+	Button *HelpButton = (Button *)root->FindDescendent(StrToID((LPCWSTR)L"buttonHelp"));
+	TouchCheckBox *MicaForEveryoneCheckbox = (TouchCheckBox *)root->FindDescendent(StrToID((LPCWSTR)L"MicaChk"));
+	TouchCheckBox *TabbedCheckbox = (TouchCheckBox *)root->FindDescendent(StrToID((LPCWSTR)L"TabChk"));
+	Element *version = (Element *)root->FindDescendent(StrToID((LPCWSTR)L"RectifyVersion"));
+	TouchButton *enableAdmin = (TouchButton *)root->FindDescendent(StrToID((LPCWSTR)L"Link_EnableAdmin"));
+	TouchButton *BtnRestartExplorer = (TouchButton *)root->FindDescendent(StrToID((LPCWSTR)L"BtnRestartExplorer"));
+	TouchButton *ThemetoolInstall = (TouchButton *)root->FindDescendent(StrToID((LPCWSTR)L"ThemetoolInstall"));
 
-	CCRadioButton* Win11DefaultMenus = (CCRadioButton*)root->FindDescendent(StrToID((LPCWSTR)L"Win11DefaultMenus"));
-	CCRadioButton* NilesoftSmall = (CCRadioButton*)root->FindDescendent(StrToID((LPCWSTR)L"NilesoftSmall"));
-	CCRadioButton* NilesoftFull = (CCRadioButton*)root->FindDescendent(StrToID((LPCWSTR)L"NilesoftFull"));
-	CCRadioButton* Classic = (CCRadioButton*)root->FindDescendent(StrToID((LPCWSTR)L"Classic"));
-	CCRadioButton* ClassicTransparent = (CCRadioButton*)root->FindDescendent(StrToID((LPCWSTR)L"ClassicTransparent"));
+	CCRadioButton *Win11DefaultMenus = (CCRadioButton *)root->FindDescendent(StrToID((LPCWSTR)L"Win11DefaultMenus"));
+	CCRadioButton *NilesoftSmall = (CCRadioButton *)root->FindDescendent(StrToID((LPCWSTR)L"NilesoftSmall"));
+	CCRadioButton *NilesoftFull = (CCRadioButton *)root->FindDescendent(StrToID((LPCWSTR)L"NilesoftFull"));
+	CCRadioButton *Classic = (CCRadioButton *)root->FindDescendent(StrToID((LPCWSTR)L"Classic"));
+	CCRadioButton *ClassicTransparent = (CCRadioButton *)root->FindDescendent(StrToID((LPCWSTR)L"ClassicTransparent"));
 
-	CCRadioButton* Options[] = { Win11DefaultMenus, NilesoftSmall, NilesoftFull, Classic, ClassicTransparent };
+	CCRadioButton *Options[] = { Win11DefaultMenus, NilesoftSmall, NilesoftFull, Classic, ClassicTransparent };
 
 	if (ThemeCombo != NULL)
 	{
@@ -466,7 +487,7 @@ HRESULT RectifyMainPage::LayoutInitialized()
 		{
 			for (ULONG i = 0; i < themeCount; i++)
 			{
-				ITheme* theme = NULL;
+				ITheme *theme = NULL;
 				if (SUCCEEDED(themetool_get_theme(i, &theme)))
 				{
 					std::wstring nameBuffer = std::wstring(255, '\0');
@@ -508,9 +529,9 @@ HRESULT RectifyMainPage::LayoutInitialized()
 		}
 		else
 		{
-#ifdef _DEBUG
+#ifdef ERROR_MESSAGES
 			MessageBox(NULL, TEXT("Failed to count the amount of themes"), TEXT("CElementProvider::LayoutInitialized"), MB_ICONERROR);
-#endif // DEBUG
+#endif // 0
 		}
 
 		if (version != NULL)
@@ -633,8 +654,8 @@ HWND RectifyMainPage::GetMainHwnd()
 		hr = CLSIDFromString(L"{31e4fa78-02b4-419f-9430-7b7585237c77}", (LPCLSID)&IID_IFrameManager);
 		if (SUCCEEDED(hr))
 		{
-			IShellBrowser* browser = NULL;
-			if (SUCCEEDED(IUnknown_QueryService(_punkSite, SID_STopLevelBrowser, IID_IShellBrowser, (LPVOID*)&browser)))
+			IShellBrowser *browser = NULL;
+			if (SUCCEEDED(IUnknown_QueryService(_punkSite, SID_STopLevelBrowser, IID_IShellBrowser, (LPVOID *)&browser)))
 			{
 				browser->GetWindow(&result);
 				browser->Release();

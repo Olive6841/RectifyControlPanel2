@@ -80,7 +80,7 @@ int SHStringFromGUIDW(REFGUID guid, LPWSTR lpszDest, int cchMax)
 }
 
 DEFINE_GUID(POLID_NoControlPanel, 0x8204C743, 0xCB99, 0x4578, 0xA7, 0xCC, 0x9D, 0xCC, 0xB9, 0xA3, 0x8C, 0x70);
-DEFINE_GUID(CLSID_ControlPanelCategory, 0x26EE0668, 0x0A00, 0x44D7, 0x93, 0x71, 0xBE, 0xB0, 0x64, 0xC9, 0x86, 0x83);
+DEFINE_GUID(CLSID_ControlPanelCategory, 0x26EE0668, 0xA00A, 0x44D7, 0x93, 0x71, 0xBE, 0xB0, 0x64, 0xC9, 0x86, 0x83);
 
 HRESULT CControlPanelPage::Notify(LPCWSTR pszChangedProp)
 {
@@ -101,15 +101,15 @@ HRESULT CControlPanelPage::Notify(LPCWSTR pszChangedProp)
             {
                 if (szQuery[0])
                 {
-                    WCHAR wszControlPanelGUID[39];
+                    WCHAR wszControlPanelGUID[GUIDSTRING_MAX];
                     hr = SHStringFromGUIDW(CLSID_ControlPanelCategory, wszControlPanelGUID, ARRAYSIZE(wszControlPanelGUID));
                     if (SUCCEEDED(hr))
                     {
                         WCHAR szControlPanelPath[42];
-                        hr = StringCchPrintf(szControlPanelPath, ARRAYSIZE(szControlPanelPath), L"::%s", wszControlPanelGUID);
+                        hr = StringCchPrintf(szControlPanelPath, (ARRAYSIZE(szControlPanelPath) - 1), L"::%s", wszControlPanelGUID);
                         if (SUCCEEDED(hr))
                         {
-                            ITEMIDLIST_ABSOLUTE *pidlControlPanel;
+                            PIDLIST_ABSOLUTE pidlControlPanel;
                             hr = SHParseDisplayName(szControlPanelPath, 0, &pidlControlPanel, 0, 0);
                             if (SUCCEEDED(hr))
                             {

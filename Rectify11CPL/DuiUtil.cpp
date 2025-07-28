@@ -99,3 +99,44 @@ void DUI_WalkIUnknownElements(DirectUI::Element *pe, PFNELEMENTCALLBACK pfn, LPA
         }
     }
 }
+
+HRESULT WINAPI DUIFramework_InitDUI()
+{
+    HRESULT hr = InitProcessPriv(DUI_VERSION, g_hInst, true, true, true);
+    if (SUCCEEDED(hr))
+    {
+        hr = InitThread(DirectUI::TSM_IMMERSIVE);
+        if (FAILED(hr))
+        {
+            UnInitProcessPriv(g_hInst);
+        }
+    }
+
+    return hr;
+}
+
+#include "FocusIndicator.h"
+
+HRESULT DUIFramework_SetFocusByFocusIndicator(DirectUI::Element *peStart)
+{
+    HRESULT hr = E_FAIL;
+    CFocusIndicator *pfi = (CFocusIndicator *)peStart->FindDescendent(StrToID(L"FocusIndicator"));
+    if (pfi)
+    {
+        DirectUI::Element *peFocus = peStart->FindDescendent(pfi->GetTargetId());
+        if (peFocus)
+        {
+            hr = S_OK;
+
+            DirectUI::NavReference nr;
+            nr.Init(peFocus, nullptr);
+
+            DirectUI::Element *peElement = peFocus->GetAdjacent(nullptr, 3, &nr, 0x3);
+            if (peElement)
+                peFocus = peElement;
+            peFocus->SetKeyFocus();
+        }
+    }
+
+    return hr;
+}

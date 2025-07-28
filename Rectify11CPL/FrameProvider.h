@@ -19,41 +19,41 @@ public:
 	FrameProvider(HINSTANCE hinst, LPCWSTR pszCommonResidToCreate);
 
 	// == Begin IUnknown Impl ==
-	IFACEMETHODIMP QueryInterface(REFIID riid, __out void **ppv);
-	IFACEMETHODIMP_(ULONG) AddRef();
-	IFACEMETHODIMP_(ULONG) Release();
+	IFACEMETHOD (QueryInterface)(_In_ REFIID riid, _Out_ LPVOID *ppv) override;
+	IFACEMETHOD_(ULONG, AddRef)() override;
+	IFACEMETHOD_(ULONG, Release)() override;
 	// == End IUnknown Impl ==
 
 	// == Begin IDUIElementProviderInit Impl ==
-	IFACEMETHODIMP SetResourceID(UINT uID);
-	IFACEMETHODIMP OptionallyTakeInitialFocus(BOOL *pbTookFocus);
+	IFACEMETHOD(SetResourceID)(UINT uID) override;
+	IFACEMETHOD(OptionallyTakeInitialFocus)(BOOL *pbTookFocus) override;
 	// == End IDUIElementProviderInit Impl ==
 
 	// == Begin DirectUI::XProvider Impl ==
-	IFACEMETHODIMP CreateDUI(DirectUI::IXElementCP *pcp, HWND *phwnd);
+	IFACEMETHOD(CreateDUI)(DirectUI::IXElementCP *pcp, HWND *phwnd) override;
 	// == End DirectUI::XProvider Impl ==
 
 	// == Begin IFrameNotificationClient Impl ==
-	IFACEMETHODIMP LayoutInitialized();
-	IFACEMETHODIMP Notify(LPCWSTR pszChangedProp);
-	IFACEMETHODIMP OnNavigateAway();
-	IFACEMETHODIMP OnInnerElementDestroyed();
+	IFACEMETHOD(LayoutInitialized)() override;
+	IFACEMETHOD(Notify)(LPCWSTR pszChangedProp) override;
+	IFACEMETHOD(OnNavigateAway)() override;
+	IFACEMETHOD(OnInnerElementDestroyed)() override;
 	// == End IFrameNotificationClient Impl ==
 
 	// == Begin IFrameShellViewClient Impl ==
-	IFACEMETHODIMP OnSelectedItemChanged();
-	IFACEMETHODIMP OnSelectionChanged();
-	IFACEMETHODIMP OnContentsChanged();
-	IFACEMETHODIMP OnFolderChanged();
+	IFACEMETHOD(OnSelectedItemChanged)() override;
+	IFACEMETHOD(OnSelectionChanged)() override;
+	IFACEMETHOD(OnContentsChanged)() override;
+	IFACEMETHOD(OnFolderChanged)() override;
 	// == End IFrameShellViewClient Impl ==
 
 	// == Begin IObjectWithSite Impl ==
-	IFACEMETHODIMP SetSite(IUnknown *punkSite);
-	IFACEMETHODIMP GetSite(REFIID riid, void **ppv);
+	IFACEMETHOD(SetSite)(IUnknown *punkSite) override;
+	IFACEMETHOD(GetSite)(REFIID riid, void **ppv) override;
 	// == End IObjectWithSite Impl ==
 
 	// == Begin IServiceProvider Impl ==
-	IFACEMETHODIMP QueryService(REFGUID guidService, REFIID riid, void **ppv);
+	IFACEMETHOD(QueryService)(REFGUID guidService, REFIID riid, void **ppv) override;
 	// == End IServiceProvider Impl ==
 
 	HRESULT Init();

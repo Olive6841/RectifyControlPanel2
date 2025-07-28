@@ -199,3 +199,5 @@ IShellSearchControl : IUnknown
 
 HRESULT WINAPI IUnknown_ProfferService(IUnknown *punkSite, REFGUID sidWhat, IServiceProvider *pService, DWORD *pdwCookie);
 HRESULT WINAPI IUnknown_QueryServiceForWebBrowserApp(IUnknown *punk, REFIID riid, LPVOID *ppvOut);
+
+STDAPI_(BOOL) SHIsChildOrSelf(HWND hwndParent, HWND hwnd);

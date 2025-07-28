@@ -35,13 +35,13 @@ BOOL SHActivateContext(ULONG_PTR *pulCookie)
 	return g_hActCtx == INVALID_HANDLE_VALUE || NT5_ActivateActCtx(g_hActCtx, pulCookie);
 }
 
-BOOL SHDeactivateContext(ULONG_PTR ulCookie)
+void SHDeactivateContext(ULONG_PTR ulCookie)
 {
-	BOOL result;
-	if (ulCookie)
-		return DeactivateActCtx(0, ulCookie);
-	return result;
-};
+	if (ulCookie != 0)
+	{
+		DeactivateActCtx(0, ulCookie);
+	}
+}
 
 BOOL SHFusionLoadLibrary(LPCWSTR lpLibFileName)
 {

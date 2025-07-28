@@ -1,8 +1,6 @@
 #include "CElementWithIUnknown.h"
 
-#if 1
-
-IClassInfo *CElementWithIUnknown::Class = nullptr;
+DirectUI::IClassInfo *CElementWithIUnknown::Class = nullptr;
 
 HRESULT CElementWithIUnknown::Create(DirectUI::Element *pParent, DWORD *pdwDeferCookie, DirectUI::Element **ppElement)
 {
@@ -15,32 +13,30 @@ HRESULT CElementWithIUnknown::Create(DirectUI::Element *pParent, DWORD *pdwDefer
 	return E_NOTIMPL;
 }
 
-IClassInfo *CElementWithIUnknown::GetClassInfo()
+DirectUI::IClassInfo *CElementWithIUnknown::GetClassInfo()
 {
-    return Class;
+	return Class;
 }
 
 HRESULT CElementWithIUnknown::Register()
 {
-	return ClassInfo<CElementWithIUnknown, DirectUI::Element>::RegisterGlobal(g_hInst, L"CElementWithIUnknown", 0, NULL);
+	return ClassInfo<CElementWithIUnknown, DirectUI::Element>::RegisterGlobal(g_hInst, L"CElementWithIUnknown", nullptr, 0);
 }
 
 IUnknown *CElementWithIUnknown::GetUnknownFromElement(DirectUI::Element *pe)
 {
-    IUnknown *punk = nullptr;
+	IUnknown *punk = nullptr;
 
-    DirectUI::IClassInfo *pci = pe->GetClassInfoW();
-    while (pci)
-    {
-        if (CompareStringOrdinal(pci->GetName(), -1, CElementWithIUnknown::Class->GetName(), -1, FALSE) == CSTR_EQUAL)
-        {
-            punk = (IUnknown *)(CElementWithIUnknown *)pe;
-            break;
-        }
-        pci = pci->GetBaseClass();
-    }
+	DirectUI::IClassInfo *pci = pe->GetClassInfo();
+	while (pci)
+	{
+		if (CompareStringOrdinal(pci->GetName(), -1, CElementWithIUnknown::Class->GetName(), -1, FALSE) == CSTR_EQUAL)
+		{
+			punk = (IUnknown *)(CElementWithIUnknown *)pe;
+			break;
+		}
+		pci = pci->GetBaseClass();
+	}
 
-    return punk;
+	return punk;
 }
-
-#endif

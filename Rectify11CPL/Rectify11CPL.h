@@ -37,3 +37,6 @@ namespace fs = std::filesystem;
 
 #define NOT_IMPLEMENTED MessageBox(NULL, TEXT(__FUNCTION__), TEXT("Non implementented function in some class"), MB_ICONERROR)
 #define SHOW_ERROR(x) MessageBox(NULL, TEXT(x), TEXT("Error"), MB_ICONERROR)
+
+#define ERROR_MESSAGES
+#undef ERROR_MESSAGES

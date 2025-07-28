@@ -35,3 +35,8 @@ HRESULT WINAPI IUnknown_QueryServiceForWebBrowserApp(IUnknown *punk, REFIID riid
 
 	return hr;
 }
+
+STDAPI_(BOOL) SHIsChildOrSelf(HWND hwndParent, HWND hwnd)
+{
+	return !hwndParent || !hwnd || hwndParent != hwnd && !IsChild(hwndParent, hwnd);
+}

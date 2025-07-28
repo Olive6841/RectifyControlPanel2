@@ -20,7 +20,7 @@ public:
 	virtual void OnDestroy() override;
 
 	static DirectUI::IClassInfo* Class;
-	virtual IClassInfo *GetClassInfo() override { return Class; }
+	virtual IClassInfo *GetClassInfo() override;
 
 	static HRESULT Register();
 
@@ -33,6 +33,7 @@ public:
 	virtual HRESULT OnInnerElementDestroyed() override;
 
 private:
+	IUnknown *_punkSite;
 	bool HasAdmin;
 	IRectifyUtil* RectifyUtil = NULL;
 	bool initializing;

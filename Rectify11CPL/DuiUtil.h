@@ -15,6 +15,8 @@ void CALLBACK DUI_SendContentsChangedToUnknown(IUnknown *punk, LPARAM lparam);
 typedef void (CALLBACK *PFNELEMENTCALLBACK)(IUnknown *punk, LPARAM lParam);
 void DUI_WalkIUnknownElements(DirectUI::Element *pe, PFNELEMENTCALLBACK pfn, LPARAM lparam);
 
+HRESULT WINAPI DUIFramework_InitDUI();
+HRESULT WINAPI DUIFramework_SetFocusByFocusIndicator(DirectUI::Element *peStart);
 
 #define GetDUIPropIndirect(get, prop, index)								\
 	*ppv = DirectUI::Element::GetValue(&imp##prop##Prop, index, nullptr);	\
