@@ -51,7 +51,7 @@ BOOL SHWindowsPolicy(REFGUID rpolid)
     static SHWindowsPolicy_t fn = nullptr;
     if (!fn)
     {
-        HMODULE h = LoadLibraryW(L"shcore.dll");
+        HMODULE h = LoadLibrary(L"shcore.dll");
         if (h)
             fn = (SHWindowsPolicy_t)GetProcAddress(h, MAKEINTRESOURCEA(190));
     }
@@ -68,7 +68,7 @@ int SHStringFromGUIDW(REFGUID guid, LPWSTR lpszDest, int cchMax)
     static SHStringFromGUIDW_t fn = nullptr;
     if (!fn)
     {
-        HMODULE h = GetModuleHandleW(L"shlwapi.dll");
+        HMODULE h = GetModuleHandle(L"shlwapi.dll");
         if (h)
             fn = (SHStringFromGUIDW_t)GetProcAddress(h, MAKEINTRESOURCEA(24));
     }
@@ -89,7 +89,7 @@ HRESULT CControlPanelPage::Notify(LPCWSTR pszChangedProp)
 
     HRESULT hr = S_OK;
 
-    if (!StrCmpCW(pszChangedProp, L"SearchText") && !SHWindowsPolicy(POLID_NoControlPanel))
+    if (!StrCmpC(pszChangedProp, L"SearchText") && !SHWindowsPolicy(POLID_NoControlPanel))
     {
         IPropertyBag *ppb;
         hr = IUnknown_QueryService(_punkSite, IID_IFrameManager, IID_PPV_ARGS(&ppb));
@@ -106,7 +106,7 @@ HRESULT CControlPanelPage::Notify(LPCWSTR pszChangedProp)
                     if (SUCCEEDED(hr))
                     {
                         WCHAR szControlPanelPath[42];
-                        hr = StringCchPrintfW(szControlPanelPath, ARRAYSIZE(szControlPanelPath), L"::%s", wszControlPanelGUID);
+                        hr = StringCchPrintf(szControlPanelPath, ARRAYSIZE(szControlPanelPath), L"::%s", wszControlPanelGUID);
                         if (SUCCEEDED(hr))
                         {
                             ITEMIDLIST_ABSOLUTE *pidlControlPanel;
@@ -117,7 +117,7 @@ HRESULT CControlPanelPage::Notify(LPCWSTR pszChangedProp)
                                 hr = IUnknown_QueryService(_punkSite, SID_STopLevelBrowser, IID_PPV_ARGS(&psb));
                                 if (SUCCEEDED(hr))
                                 {
-                                    hr = psb->BrowseObject(pidlControlPanel, 0x180001u);
+                                    hr = psb->BrowseObject(pidlControlPanel, (SBSP_SAMEBROWSER | SBSP_ACTIVATE_NOFOCUS | SBSP_CREATENOHISTORY));
                                     psb->Release();
                                 }
                                 ILFree(pidlControlPanel);

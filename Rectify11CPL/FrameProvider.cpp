@@ -271,19 +271,29 @@ HRESULT STDMETHODCALLTYPE FrameProvider::LayoutInitialized()
 	{
 		RectifyMainPage* page = (RectifyMainPage*)root->FindDescendent(StrToID((LPCWSTR)L"MainPageElem"));
 		page->SetSite(_punkSite);
-		page->OnInit();
+		page->LayoutInitialized();
 	}
 	else if (root->FindDescendent(StrToID((LPCWSTR)L"ThemePageElem")) != NULL)
 	{
 		RectifyThemeCfgPage* page = (RectifyThemeCfgPage*)root->FindDescendent(StrToID((LPCWSTR)L"ThemePageElem"));
 		page->SetSite(_punkSite);
-		page->OnInit();
+		page->LayoutInitialized();
 	}
 
 	return S_OK;
 }
+
 HRESULT STDMETHODCALLTYPE FrameProvider::Notify(LPCWSTR pszChangedProp)
 {
+#if 0 // FIXME!! FIXME!!: Figure out why this wont send notifications to CControlPanelPage properly 
+	Element *peRoot = XProvider::GetRoot();
+	if (peRoot)
+	{
+		//MessageBox(NULL, L"peRoot is valid!", L"FrameProvider::Notify", MB_OK);
+		DUI_WalkIUnknownElements(peRoot, DUI_SendNotificationToUnknown, (LPARAM)pszChangedProp);
+	}
+	return S_OK;
+#else
 	if (!StrCmpCW((LPCWSTR)pszChangedProp, L"SettingsChanged"))
 	{
 		//This is invoked when the UI is refreshed!
@@ -331,6 +341,7 @@ HRESULT STDMETHODCALLTYPE FrameProvider::Notify(LPCWSTR pszChangedProp)
 		}
 	}
 	return 0;
+#endif
 }
 
 HRESULT STDMETHODCALLTYPE FrameProvider::OnNavigateAway()

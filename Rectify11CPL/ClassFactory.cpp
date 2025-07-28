@@ -53,9 +53,12 @@ HRESULT CElementProvider_CreateInstance(__in REFIID riid, __deref_out void** ppv
         if (SUCCEEDED(hr))
         {
             hr = pElementProvider->QueryInterface(riid, ppv);
-
-            DirectUI::ClassInfo<RectifyMainPage, DirectUI::Element>::RegisterGlobal(g_hInst, L"RectifyMainPage", 0, NULL);
-            DirectUI::ClassInfo<RectifyThemeCfgPage, DirectUI::Element>::RegisterGlobal(g_hInst, L"RectifyThemeCfgPage", 0, NULL);
+            if (SUCCEEDED(hr))
+            {
+				// Register the main page and theme configuration page elements
+				RectifyMainPage::Register();
+				RectifyThemeCfgPage::Register();
+            }
             pElementProvider->Release();
         }
     }

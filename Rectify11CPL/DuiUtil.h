@@ -3,14 +3,14 @@
 #include "CElementWithIUnknown.h"
 #include "Rectify11CPL.h"
 
-HRESULT WINAPI DUI_SetSiteOnUnknown(IUnknown *punk, IUnknown *punkSite);
-void WINAPI DUI_SendSelectionChangedToUnknown(IUnknown *punk, LPARAM lparam);
-void WINAPI DUI_SendSelectedItemChangedToUnknown(IUnknown *punk, LPARAM lparam);
-void WINAPI DUI_SendNotificationToUnknown(IUnknown *punk, LPARAM lparam);
-void WINAPI DUI_SendNavigateAwayToUnknown(IUnknown *punk, LPARAM lparam);
-void WINAPI DUI_SendInitializationToUnknown(IUnknown *punk, LPARAM lparam);
-void WINAPI DUI_SendFolderChangedToUnknown(IUnknown *punk, LPARAM lparam);
-void WINAPI DUI_SendContentsChangedToUnknown(IUnknown *punk, LPARAM lparam);
+HRESULT CALLBACK DUI_SetSiteOnUnknown(IUnknown *punk, IUnknown *punkSite);
+void CALLBACK DUI_SendSelectionChangedToUnknown(IUnknown *punk, LPARAM lparam);
+void CALLBACK DUI_SendSelectedItemChangedToUnknown(IUnknown *punk, LPARAM lparam);
+void CALLBACK DUI_SendNotificationToUnknown(IUnknown *punk, LPARAM lparam);
+void CALLBACK DUI_SendNavigateAwayToUnknown(IUnknown *punk, LPARAM lparam);
+void CALLBACK DUI_SendInitializationToUnknown(IUnknown *punk, LPARAM lparam);
+void CALLBACK DUI_SendFolderChangedToUnknown(IUnknown *punk, LPARAM lparam);
+void CALLBACK DUI_SendContentsChangedToUnknown(IUnknown *punk, LPARAM lparam);
 
 typedef void (CALLBACK *PFNELEMENTCALLBACK)(IUnknown *punk, LPARAM lParam);
 void DUI_WalkIUnknownElements(DirectUI::Element *pe, PFNELEMENTCALLBACK pfn, LPARAM lparam);

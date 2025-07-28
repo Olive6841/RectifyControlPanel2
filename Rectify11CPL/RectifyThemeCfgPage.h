@@ -1,29 +1,33 @@
 #pragma once
 
-class RectifyThemeCfgPage : public Element
+#include "CControlPanelPage.h"
+
+class RectifyThemeCfgPage : public CControlPanelPage
 {
 public:
 	RectifyThemeCfgPage();
 	virtual ~RectifyThemeCfgPage() override;
 
-	static DirectUI::IClassInfo* Class;
-	static HRESULT Create(Element* pParent, DWORD* pdwDeferCookie, Element** ppElement);
+	static DirectUI::IClassInfo *Class;
+	static HRESULT Create(Element *pParent, DWORD *pdwDeferCookie, Element **ppElement);
 
 	//Element
-	virtual IClassInfo* GetClassInfoW() override;
+	virtual IClassInfo *GetClassInfoW() override { return Class; }
+
+	static HRESULT Register();
+
+	IFACEMETHOD(QueryInterface)(REFIID riid, void **ppv) override;
+	IFACEMETHOD_(ULONG, AddRef)() override { return CElementWithSite::AddRef(); }
+	IFACEMETHOD_(ULONG, Release)() override { return CElementWithSite::Release(); }
 
 	// Element overrides
-	virtual void OnEvent(Event* iev) override;
+	virtual void OnEvent(Event *iev) override;
 
 	// Important methods
-	virtual void OnInit();
-	virtual void SetSite(IUnknown* site) { this->site = site; }
-
-	static inline DirectUI::IClassInfo* GetClassInfoPtr() { return Class; }
+	virtual HRESULT LayoutInitialized() override;
 
 	void GoBack();
- private:
-	IUnknown* site = NULL;
+
+private:
 	bool initializing = true;
 };
-

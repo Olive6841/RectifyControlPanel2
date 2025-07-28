@@ -1,11 +1,11 @@
 #include "DuiUtil.h"
 
-HRESULT WINAPI DUI_SetSiteOnUnknown(IUnknown *punk, IUnknown *punkSite)
+HRESULT CALLBACK DUI_SetSiteOnUnknown(IUnknown *punk, IUnknown *punkSite)
 {
     return IUnknown_SetSite(punk, punkSite);
 }
 
-void WINAPI DUI_SendSelectionChangedToUnknown(IUnknown *punk, LPARAM lparam)
+void CALLBACK DUI_SendSelectionChangedToUnknown(IUnknown *punk, LPARAM lparam)
 {
     IFrameShellViewClient *pfsvc;
     if (SUCCEEDED(punk->QueryInterface(IID_PPV_ARGS(&pfsvc))))
@@ -15,7 +15,7 @@ void WINAPI DUI_SendSelectionChangedToUnknown(IUnknown *punk, LPARAM lparam)
     }
 }
 
-void WINAPI DUI_SendSelectedItemChangedToUnknown(IUnknown *punk, LPARAM lparam)
+void CALLBACK DUI_SendSelectedItemChangedToUnknown(IUnknown *punk, LPARAM lparam)
 {
     IFrameShellViewClient *pfsvc;
     if (SUCCEEDED(punk->QueryInterface(IID_PPV_ARGS(&pfsvc))))
@@ -25,7 +25,7 @@ void WINAPI DUI_SendSelectedItemChangedToUnknown(IUnknown *punk, LPARAM lparam)
     }
 }
 
-void WINAPI DUI_SendNotificationToUnknown(IUnknown *punk, LPARAM lparam)
+void CALLBACK DUI_SendNotificationToUnknown(IUnknown *punk, LPARAM lparam)
 {
     IFrameNotificationClient *pfnc;
     if (SUCCEEDED(punk->QueryInterface(IID_PPV_ARGS(&pfnc))))
@@ -35,7 +35,7 @@ void WINAPI DUI_SendNotificationToUnknown(IUnknown *punk, LPARAM lparam)
     }
 }
 
-void WINAPI DUI_SendNavigateAwayToUnknown(IUnknown *punk, LPARAM lparam)
+void CALLBACK DUI_SendNavigateAwayToUnknown(IUnknown *punk, LPARAM lparam)
 {
     IFrameNotificationClient *pfnc;
     if (SUCCEEDED(punk->QueryInterface(IID_PPV_ARGS(&pfnc))))
@@ -45,7 +45,7 @@ void WINAPI DUI_SendNavigateAwayToUnknown(IUnknown *punk, LPARAM lparam)
     }
 }
 
-void WINAPI DUI_SendInitializationToUnknown(IUnknown *punk, LPARAM lparam)
+void CALLBACK DUI_SendInitializationToUnknown(IUnknown *punk, LPARAM lparam)
 {
     IFrameNotificationClient *pfnc;
     if (SUCCEEDED(punk->QueryInterface(IID_PPV_ARGS(&pfnc))))
@@ -55,7 +55,7 @@ void WINAPI DUI_SendInitializationToUnknown(IUnknown *punk, LPARAM lparam)
     }
 }
 
-void WINAPI DUI_SendFolderChangedToUnknown(IUnknown *punk, LPARAM lparam)
+void CALLBACK DUI_SendFolderChangedToUnknown(IUnknown *punk, LPARAM lparam)
 {
     IFrameShellViewClient *pfsvc;
     if (SUCCEEDED(punk->QueryInterface(IID_PPV_ARGS(&pfsvc))))
@@ -65,7 +65,7 @@ void WINAPI DUI_SendFolderChangedToUnknown(IUnknown *punk, LPARAM lparam)
     }
 }
 
-void WINAPI DUI_SendContentsChangedToUnknown(IUnknown *punk, LPARAM lparam)
+void CALLBACK DUI_SendContentsChangedToUnknown(IUnknown *punk, LPARAM lparam)
 {
     IFrameShellViewClient *pfsvc;
     if (SUCCEEDED(punk->QueryInterface(IID_PPV_ARGS(&pfsvc))))

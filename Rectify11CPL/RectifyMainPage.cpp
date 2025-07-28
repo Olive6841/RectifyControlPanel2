@@ -5,14 +5,17 @@
 #include "CControlPanelNavLinkCommand.h"
 #include "CControlPanelNavLink.h"
 #include "CControlPanelNavLinks.h"
+#include "DuiUtil.h"
 #include <new>
 
 IClassInfo* RectifyMainPage::Class = NULL;
 
 
 RectifyMainPage::RectifyMainPage()
+	: HasAdmin(false)
+	, RectifyUtil(nullptr)
+	, initializing(true)
 {
-
 }
 
 RectifyMainPage::~RectifyMainPage()
@@ -25,9 +28,15 @@ HRESULT RectifyMainPage::Create(Element* pParent, DWORD* pdwDeferCookie, Element
 	return CreateAndInit<RectifyMainPage, int>(0, pParent, pdwDeferCookie, ppElement);
 }
 
-IClassInfo* RectifyMainPage::GetClassInfoW()
+HRESULT RectifyMainPage::Register()
 {
-	return RectifyMainPage::Class;
+	HRESULT hr = CElementWithSite::Register();
+	if (SUCCEEDED(hr))
+	{
+		hr = DirectUI::ClassInfo<RectifyMainPage, CElementWithSite>::RegisterGlobal(g_hInst, L"RectifyMainPage", nullptr, 0);
+	}
+
+	return hr;
 }
 
 void RectifyMainPage::OnEvent(Event* iev)
@@ -325,19 +334,22 @@ void RectifyMainPage::InitNavLinks()
 	if (SUCCEEDED(hr))
 	{
 		IPropertyBag* bag = NULL;
-		int hr = IUnknown_QueryService(site, SID_PerLayoutPropertyBag, IID_IPropertyBag, (LPVOID*)&bag);
+		hr = IUnknown_QueryService(_punkSite, SID_PerLayoutPropertyBag, IID_IPropertyBag, (LPVOID*)&bag);
 		if (SUCCEEDED(hr))
 		{
-			if (SUCCEEDED(PSPropertyBag_WriteUnknown(bag, L"ControlPanelNavLinks", pLinks)))
+			hr = PSPropertyBag_WriteUnknown(bag, L"ControlPanelNavLinks", pLinks);
+			if (SUCCEEDED(hr))
 			{
 
 			}
-			else {
+			else
+			{
 				MessageBox(NULL, TEXT("Failed to write property bag for navigation links"), TEXT("CElementProvider::InitNavLinks"), 0);
 			}
 			bag->Release();
 		}
-		else {
+		else
+		{
 			MessageBox(NULL, TEXT("Failed to get property bag for navigation links"), TEXT("CElementProvider::InitNavLinks"), 0);
 		}
 	}
@@ -401,7 +413,24 @@ void RectifyMainPage::UpdateThemetoolStatus()
 	status->SetContentString((LPCWSTR)statusText.c_str());
 }
 
-void RectifyMainPage::OnInit()
+IFACEMETHODIMP RectifyMainPage::QueryInterface(REFIID riid, void** ppv)
+{
+	static const QITAB qit[] =
+	{
+		QITABENT(RectifyMainPage, IFrameNotificationClient),
+		{ 0 },
+	};
+
+	HRESULT hr = QISearch(this, qit, riid, ppv);
+	if (FAILED(hr))
+	{
+		hr = CElementWithSite::QueryInterface(riid, ppv);
+	}
+
+	return hr;
+}
+
+HRESULT RectifyMainPage::LayoutInitialized()
 {
 	Element* root = GetRoot();
 	RectifyUtil = (IRectifyUtil*)new CRectifyUtil();
@@ -585,6 +614,13 @@ void RectifyMainPage::OnInit()
 
 	UpdateThemeGraphic();
 	initializing = false;
+
+	return S_OK;
+}
+
+HRESULT RectifyMainPage::OnInnerElementDestroyed()
+{
+	return S_OK;
 }
 
 HWND RectifyMainPage::GetMainHwnd()
@@ -598,7 +634,7 @@ HWND RectifyMainPage::GetMainHwnd()
 		if (SUCCEEDED(hr))
 		{
 			IShellBrowser* browser = NULL;
-			if (SUCCEEDED(IUnknown_QueryService(site, SID_STopLevelBrowser, IID_IShellBrowser, (LPVOID*)&browser)))
+			if (SUCCEEDED(IUnknown_QueryService(_punkSite, SID_STopLevelBrowser, IID_IShellBrowser, (LPVOID*)&browser)))
 			{
 				browser->GetWindow(&result);
 				browser->Release();

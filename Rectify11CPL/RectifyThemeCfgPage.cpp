@@ -20,9 +20,32 @@ HRESULT RectifyThemeCfgPage::Create(Element* pParent, DWORD* pdwDeferCookie, Ele
 	return CreateAndInit<RectifyThemeCfgPage, int>(0, pParent, pdwDeferCookie, ppElement);
 }
 
-IClassInfo* RectifyThemeCfgPage::GetClassInfoW()
+HRESULT RectifyThemeCfgPage::Register()
 {
-	return RectifyThemeCfgPage::Class;
+	HRESULT	hr = CElementWithSite::Register();
+	if (SUCCEEDED(hr))
+	{
+		hr = DirectUI::ClassInfo<RectifyThemeCfgPage, CElementWithSite>::RegisterGlobal(g_hInst, L"RectifyThemeCfgPage", nullptr, 0);
+	}
+
+	return hr;
+}
+
+IFACEMETHODIMP RectifyThemeCfgPage::QueryInterface(REFIID riid, void **ppv)
+{
+	static const QITAB qit[] =
+	{
+		QITABENT(RectifyThemeCfgPage, IFrameNotificationClient),
+		{ 0 },
+	};
+
+	HRESULT hr = QISearch(this, qit, riid, ppv);
+	if (FAILED(hr))
+	{
+		CElementWithSite::QueryInterface(riid, ppv);
+	}
+
+	return hr;
 }
 
 void RectifyThemeCfgPage::OnEvent(Event* iev)
@@ -83,7 +106,7 @@ void RectifyThemeCfgPage::GoBack()
 	if (SUCCEEDED(hr))
 	{
 		IShellBrowser* browser = NULL;
-		hr = IUnknown_QueryService(site, SID_STopLevelBrowser, IID_IShellBrowser, (LPVOID*)&browser);
+		hr = IUnknown_QueryService(_punkSite, SID_STopLevelBrowser, IID_IShellBrowser, (LPVOID*)&browser);
 		if (SUCCEEDED(hr))
 		{
 			hr = browser->BrowseObject(NULL, SBSP_PARENT | SBSP_SAMEBROWSER);
@@ -100,7 +123,7 @@ void RectifyThemeCfgPage::GoBack()
 	}
 }
 
-void RectifyThemeCfgPage::OnInit()
+HRESULT RectifyThemeCfgPage::LayoutInitialized()
 {
 	Element* root = GetRoot();
 	TouchCheckBox* IgnoreBg = (TouchCheckBox*)root->FindDescendent(StrToID((LPCWSTR)L"IgnoreBg"));
@@ -117,7 +140,7 @@ void RectifyThemeCfgPage::OnInit()
 	if (RegCreateKey(HKEY_CURRENT_USER, Rectify11PrefsKey, &Rectify11))
 	{
 		SHOW_ERROR("Failed to create rectify11 key");
-		return;
+		return E_FAIL;
 	}
 
 	DWORD size = 4;
@@ -152,4 +175,6 @@ void RectifyThemeCfgPage::OnInit()
 	IgnoreSounds->SetCheckedState(IgnoreSoundsVal ? CSF_Checked : CSF_Unchecked);
 	IgnoreScreensavers->SetCheckedState(IgnoreScreensaversVal ? CSF_Checked : CSF_Unchecked);
 	initializing = false;
+
+	return S_OK;
 }
