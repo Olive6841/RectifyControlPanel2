@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Rectify11CPL.h"
-
 class CFocusIndicator : public DirectUI::Element
 {
 public:

@@ -1,20 +1,17 @@
 // This class is created by Shell32 CLayoutFolder class. This class "provides" the Element for DirectUI to render in explorer.
 
-#include <windows.h>
-#include <shlobj.h>
-#include <propkey.h>
-#include <shlwapi.h>
-#include <strsafe.h>
+#include "pch.h"
+
+#include "FrameProvider.h"
+
 #include <shellapi.h>
 
-#include "Rectify11CPL.h"
 #include "CElementWithSite.h"
 #include "FrameModule.h"
 #include "NavigateButton.h"
 #include "SHFusion.h"
 #include "DuiUtil.h"
 #include "ElevationManager.h"
-#include "FrameProvider.h"
 #include "resource.h"
 #include "RectifyMainPage.h"
 #include "RectifyThemeCfgPage.h"

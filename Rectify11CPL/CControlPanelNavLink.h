@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CControlPanelNavLinkCommand.h"
+
 class CControlPanelNavLink // should be 88 bytes (0x58) in size
 {
 public:

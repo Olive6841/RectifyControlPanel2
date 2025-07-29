@@ -1,17 +1,17 @@
 // This class implements the IRectifyUtil interface. This class is registered as a COM object to allow the code
 // to be ran as administrator, without elevating explorer.exe or starting another process
 
-#include "Rectify11CPL.h"
+#include "pch.h"
+
 #include "CRectifyUtil.h"
-#include "psapi.h"
+
+#include <Psapi.h>
 #include <tlhelp32.h>
 #include <taskschd.h>
 #include <comutil.h>
 #include "Guid.h"
-#include <Shlwapi.h>
 #include <locale>
 #include <codecvt>
-#include <string>
 
 #pragma comment(lib, "taskschd.lib")
 #pragma comment(lib, "comsupp.lib")

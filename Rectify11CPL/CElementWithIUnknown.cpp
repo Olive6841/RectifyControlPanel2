@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "CElementWithIUnknown.h"
 
 DirectUI::IClassInfo *CElementWithIUnknown::Class = nullptr;

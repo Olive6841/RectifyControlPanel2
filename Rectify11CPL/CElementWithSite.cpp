@@ -1,4 +1,4 @@
-#if 1
+#include "pch.h"
 
 #include "CElementWithSite.h"
 
@@ -25,6 +25,8 @@ HRESULT CElementWithSite::Register()
 
 	return hr;
 }
+
+DEFINE_GUID(IID_IFrameManager, 0x31E4FA78, 0x02B4, 0x419F, 0x94, 0x30, 0x7B, 0x75, 0x85, 0x23, 0x7C, 0x77);
 
 HRESULT CElementWithSite::GetPersistStream(
 	int a2,
@@ -89,5 +91,3 @@ HRESULT CElementWithSite::GetSite(REFIID riid, void **ppvSite)
 CElementWithSite::~CElementWithSite()
 {
 }
-
-#endif 

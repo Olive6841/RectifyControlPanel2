@@ -1,9 +1,9 @@
-#include "Rectify11CPL.h"
+#include "pch.h"
+
 #include "RectifyMainPage.h"
+
 #include "CRectifyUtil.h"
 #include "ElevationManager.h"
-#include "CControlPanelNavLinkCommand.h"
-#include "CControlPanelNavLink.h"
 #include "CControlPanelNavLinks.h"
 #include "DuiUtil.h"
 #include <new>

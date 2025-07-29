@@ -1,7 +1,5 @@
 #pragma once
 
-#if 1
-
 #include "CElementWithSite.h"
 
 class CControlPanelPage
@@ -61,5 +59,3 @@ private:
     CControlPanelPage *_pPage;
     ULONG _cRef;
 };
-
-#endif // 0

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CControlPanelNavLink.h"
+
 class CControlPanelNavLinks : public IUnknown
 {
 public:

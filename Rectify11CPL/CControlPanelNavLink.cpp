@@ -1,5 +1,5 @@
-#include "Rectify11CPL.h"
-#include "CControlPanelNavLinkCommand.h"
+#include "pch.h"
+
 #include "CControlPanelNavLink.h"
 
 CControlPanelNavLink::CControlPanelNavLink(CPNAV_LIST list)

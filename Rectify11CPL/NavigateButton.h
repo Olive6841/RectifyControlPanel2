@@ -1,7 +1,5 @@
 #pragma once
 
-#if 1
-
 #include "CElementWithSite.h"
 
 class CNavigateButton : public CElementWithSite
@@ -64,5 +62,3 @@ static DirectUI::_StaticValuePtr *svShellExecuteVerb()
 
 	return &value;
 }
-
-#endif 

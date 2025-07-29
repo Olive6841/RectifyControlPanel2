@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CElementWithIUnknown.h"
-#include "Rectify11CPL.h"
 
 HRESULT CALLBACK DUI_SetSiteOnUnknown(IUnknown *punk, IUnknown *punkSite);
 void CALLBACK DUI_SendSelectionChangedToUnknown(IUnknown *punk, LPARAM lparam);

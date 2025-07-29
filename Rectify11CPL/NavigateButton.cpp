@@ -1,4 +1,4 @@
-#if 1
+#include "pch.h"
 
 #include "NavigateButton.h"
 
@@ -433,5 +433,3 @@ LPCWSTR CNavigateButton::GetShellExecuteParams(DirectUI::Value **ppv)
 	*ppv = DirectUI::Element::GetValue(&impShellExecuteParamsProp, 2, nullptr);
 	return (*ppv)->GetString();
 }
-
-#endif

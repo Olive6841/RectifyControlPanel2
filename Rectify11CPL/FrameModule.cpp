@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "FrameModule.h"
 
 DirectUI::IClassInfo *CFrameModule::Class = nullptr;

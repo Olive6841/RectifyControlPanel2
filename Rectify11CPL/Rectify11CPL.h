@@ -5,18 +5,23 @@
 
 #pragma comment(lib,"dui70.lib")
 
-#include <windows.h>
+#include <Windows.h>
 #include <shlwapi.h>
 #include <objbase.h>
 
 #include <Shlobj.h>
+#include <propkey.h>
 #include <olectl.h>
 #include <strsafe.h>
+
 #include <atlcomcli.h>
+
 #include <string>
+
 #include "undoc.h"
 #include "resource.h"
 #include "dllmain.h"
+
 #include <fstream>
 #include <sstream>
 #include <format>
@@ -28,6 +33,8 @@
 using namespace DirectUI;
 using namespace std;
 namespace fs = std::filesystem;
+
+#include "CRectifyUtil.h"
 
 #include "CControlPanelNavLinkCommand.h"
 #include "CControlPanelNavLink.h"

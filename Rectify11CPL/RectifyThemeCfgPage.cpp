@@ -1,5 +1,7 @@
-#include "Rectify11CPL.h"
+#include "pch.h"
+
 #include "RectifyThemeCfgPage.h"
+
 #include "CRectifyUtil.h"
 
 IClassInfo* RectifyThemeCfgPage::Class = NULL;

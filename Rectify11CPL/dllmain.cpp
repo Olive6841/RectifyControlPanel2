@@ -1,5 +1,5 @@
-#include <olectl.h>
-#include <strsafe.h>
+#include "pch.h"
+
 // The GUID for the FolderViewImpl
 #include "GUID.h"
 

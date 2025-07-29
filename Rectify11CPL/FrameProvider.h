@@ -1,10 +1,5 @@
-#include <windows.h>
-#include <shlobj.h>
 #include <propkey.h>
-#include <shlwapi.h>
-#include <strsafe.h>
 
-#include "Rectify11CPL.h"
 #include "CRectifyUtil.h"
 
 class FrameProvider

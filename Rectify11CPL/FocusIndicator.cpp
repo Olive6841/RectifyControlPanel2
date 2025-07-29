@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "FocusIndicator.h"
 
 IClassInfo* CFocusIndicator::Class = nullptr;

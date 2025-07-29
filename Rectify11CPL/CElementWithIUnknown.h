@@ -1,9 +1,5 @@
 #pragma once
 
-#if 1
-
-#include "Rectify11CPL.h"
-
 class CElementWithIUnknown
 	: public DirectUI::Element
 	, public IUnknown
@@ -21,5 +17,3 @@ public:
 
 	static IUnknown *GetUnknownFromElement(Element *pe);
 };
-
-#endif

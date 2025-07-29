@@ -1,11 +1,15 @@
-#include <windows.h>
-#include "undoc.h"
+#include "pch.h"
+
 #include "ElevationManager.h"
+
+#include "undoc.h"
 #include "Guid.h"
 #include <string>
-using namespace std;
+
 #include <system_error>
 #include "CRectifyUtil.h"
+
+using namespace std;
 
 IRectifyUtil* ElevationManager::Initialize(HWND window)
 {

@@ -1,9 +1,9 @@
-#include <shlobj.h>
-#include <shlwapi.h>
-#include "Rectify11CPL.h"
+#include "pch.h"
+
+#include "ClassFactory.h"
 
 #include "FrameProvider.h"
-#include "ClassFactory.h"
+
 #include "Guid.h"
 #include "RectifyMainPage.h"
 #include "RectifyThemeCfgPage.h"
@@ -20,10 +20,12 @@ CFolderViewImplClassFactory::~CFolderViewImplClassFactory()
 
 HRESULT CFolderViewImplClassFactory::QueryInterface(__in REFIID riid, __deref_out void **ppv)
 {
-     static const QITAB qit[] = {
+     static const QITAB qit[] =
+     {
         QITABENT (CFolderViewImplClassFactory, IClassFactory),
         { 0 },
     };
+
     return QISearch(this, qit, riid, ppv);
 }
 

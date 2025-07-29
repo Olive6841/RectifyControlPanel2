@@ -1,7 +1,6 @@
-#include "Rectify11CPL.h"
+#include "pch.h"
+
 #include "CControlPanelNavLinks.h"
-#include "CControlPanelNavLink.h"
-#include "CControlPanelNavLinkCommand.h"
 
 CControlPanelNavLinks::CControlPanelNavLinks()
 	: _hdpaNavLinks(NULL)

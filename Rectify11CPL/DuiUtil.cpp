@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "DuiUtil.h"
 
 HRESULT CALLBACK DUI_SetSiteOnUnknown(IUnknown *punk, IUnknown *punkSite)

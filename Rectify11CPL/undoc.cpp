@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "undoc.h"
 
 HRESULT WINAPI IUnknown_ProfferService(IUnknown *punkSite, REFGUID sidWhat, IServiceProvider *pService, DWORD *pdwCookie)

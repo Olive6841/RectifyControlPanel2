@@ -1,7 +1,5 @@
 #pragma once
 
-#if 1
-
 #include "NavigateButton.h"
 
 MIDL_INTERFACE("60CE96BB-B6F9-42DC-B84E-5E5D9C370A6F")
@@ -34,5 +32,3 @@ public:
     IFACEMETHODIMP GetModuleID(LPWSTR *ppszModuleID);
 	// == End IFrameModule Interface ==
 };
-
-#endif

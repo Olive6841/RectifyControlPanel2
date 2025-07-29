@@ -31,6 +31,7 @@
     <ClCompile Include="undoc.cpp" />
     <ClCompile Include="NavigateButton.cpp" />
     <ClCompile Include="FrameModule.cpp" />
+    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassFactory.h" />
@@ -69,6 +70,7 @@
     </ClInclude>
     <ClInclude Include="FrameModule.h" />
     <ClInclude Include="NavigateButton.h" />
+    <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Rectify11CPL.rc" />

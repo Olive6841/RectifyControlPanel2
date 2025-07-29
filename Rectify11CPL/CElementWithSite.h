@@ -1,8 +1,8 @@
 #pragma once
 
-#if 1
-
 #include "CElementWithIUnknown.h"
+
+extern const IID IID_IFrameManager;
 
 class CElementWithSite
 	: public CElementWithIUnknown
@@ -29,5 +29,3 @@ protected:
 
 	IUnknown *_punkSite;
 };
-
-#endif 
