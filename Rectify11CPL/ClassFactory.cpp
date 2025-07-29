@@ -49,7 +49,7 @@ HRESULT CRectifyCplElementProvider_CreateInstance(IUnknown *punkOuter, _In_ REFI
     if (punkOuter)
         return CLASS_E_NOAGGREGATION;
 
-    FrameProvider *pObj = new FrameProvider(g_hInst, L"main");
+    FrameProvider *pObj = new (std::nothrow) FrameProvider(g_hInst, L"main");
     HRESULT hr = pObj ? pObj->Init() : E_OUTOFMEMORY;
     if (SUCCEEDED(hr))
     {

@@ -43,17 +43,16 @@ void SHDeactivateContext(ULONG_PTR ulCookie)
 	}
 }
 
-BOOL SHFusionLoadLibrary(LPCWSTR lpLibFileName)
+HMODULE SHFusionLoadLibrary(LPCWSTR lpLibFileName)
 {
 	ULONG_PTR ulCookie = 0;
-	BOOL result = SHActivateContext(&ulCookie);
-	if (result)
+	HMODULE hMod = (HMODULE)SHActivateContext(&ulCookie);
+	if (hMod)
 	{
-		HMODULE LibraryW = LoadLibraryW(lpLibFileName);
+		hMod = LoadLibraryEx(lpLibFileName, 0, 0x4000);
 		SHDeactivateContext(ulCookie);
-		return (BOOL)LibraryW;
 	}
-	return result;
+	return hMod;
 }
 
 BOOL DelayLoadCC()
