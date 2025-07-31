@@ -65,14 +65,9 @@ HRESULT CControlPanelNavLinks::AddLinkNotify(CPNAV_LIST list, HINSTANCE hInstanc
 		hr = pLink->SetName(hInstance, nNameResId);
 		if (SUCCEEDED(hr))
 		{
-			pLink->GetCommand()->SetType(CPNAV_CMDTYPE_NOTIFY);
-			if (nLinkId <= 0)
+			hr = pLink->SetCommandNotify(nLinkId);
+			if (SUCCEEDED(hr))
 			{
-				hr = E_INVALIDARG;
-			}
-			else
-			{
-				pLink->GetCommand()->SetId(nLinkId);
 				hr = Add(pLink);
 				if (SUCCEEDED(hr))
 				{
@@ -129,11 +124,11 @@ HRESULT CControlPanelNavLinks::AddLinkShellEx(CPNAV_LIST list, HINSTANCE hInstan
 HRESULT CControlPanelNavLinks::AddLinkControlPanel(CPNAV_LIST list, HINSTANCE hInstance, UINT nNameResId, LPCWSTR pszApplet, LPCWSTR pszAppletPage, CControlPanelNavLink **ppLink)
 {
 	if (ppLink)
-		*ppLink = 0;
+		*ppLink = nullptr;
 
 	CControlPanelNavLink *pLink;
 	HRESULT hr = CControlPanelNavLink::Create(list, &pLink);
-	if (hr >= 0)
+	if (SUCCEEDED(hr))
 	{
 		hr = pLink->SetName(hInstance, nNameResId);
 		if (SUCCEEDED(hr))
@@ -167,9 +162,9 @@ HRESULT CControlPanelNavLinks::Add(CControlPanelNavLink *pLink)
 	if (!_hdpaNavLinks)
 	{
 		_hdpaNavLinks = DPA_Create(10);
-		if (!DPA_Create(10))
+		if (!_hdpaNavLinks)
 		{
-			hr = E_OUTOFMEMORY;
+			return E_OUTOFMEMORY;
 		}
 	}
 

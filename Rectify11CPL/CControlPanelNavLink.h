@@ -29,17 +29,14 @@ public:
 		_cmd.SetSQMStream(dwDatapointId, cSqmStreamEntries, pSqmStreamEntries);
 	}
 
-	// idfk
 	HRESULT SetCommandNotify(int nLinkId)
 	{
-		_cmd.SetType(CPNAV_CMDTYPE_NOTIFY);
-
 		if (nLinkId <= 0)
 			return E_INVALIDARG;
-		else
-			_cmd.SetId(nLinkId);
 
-		return S_OK; // ?
+		_cmd.SetType(CPNAV_CMDTYPE_NOTIFY);
+		_cmd.SetId(nLinkId);
+		return S_OK;
 	}
 
 	HRESULT SetCommandShellEx(LPCWSTR pszCommand, LPCWSTR pszParams)
