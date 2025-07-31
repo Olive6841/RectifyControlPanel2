@@ -197,3 +197,13 @@ HRESULT WINAPI IUnknown_ProfferService(IUnknown *punkSite, REFGUID sidWhat, ISer
 HRESULT WINAPI IUnknown_QueryServiceForWebBrowserApp(IUnknown *punk, REFIID riid, LPVOID *ppvOut);
 
 STDAPI_(BOOL) SHIsChildOrSelf(HWND hwndParent, HWND hwnd);
+
+MIDL_INTERFACE("f11cbea6-468c-4247-9726-6c75dcd1604c")
+IControlPanelPrivate : public IUnknown
+{
+	STDMETHOD(UpdateWowCache)(unsigned long) PURE;
+	STDMETHOD(GetWowCplInfo)(LPCWSTR, HICON *, int *) PURE;
+	STDMETHOD(AddEnumFlag)(DWORD) PURE;
+	STDMETHOD(StopLoggingRecentItems)() PURE;
+	STDMETHOD(AdjustIDListToAllItemsView)(PIDLIST_ABSOLUTE, PIDLIST_ABSOLUTE *) PURE;
+};

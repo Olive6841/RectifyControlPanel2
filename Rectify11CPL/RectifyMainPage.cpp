@@ -6,15 +6,14 @@
 #include "ElevationManager.h"
 #include "CControlPanelNavLinks.h"
 #include "DuiUtil.h"
-#include <new>
 
-IClassInfo *RectifyMainPage::Class = NULL;
+IClassInfo *RectifyMainPage::Class = nullptr;
 
 RectifyMainPage::RectifyMainPage()
 	: _punkSite(nullptr)
-	, HasAdmin(false)
-	, RectifyUtil(nullptr)
-	, initializing(true)
+	, _fAdmin(false)
+	, _pRectifyUtil(nullptr)
+	, _fInitializing(true)
 {
 }
 
@@ -48,28 +47,31 @@ void RectifyMainPage::OnEvent(Event *iev)
 {
 	if (iev->nStage != GMF_BUBBLED)
 		return;
+
 	if (!iev->fHandled)
 		Element::OnEvent(iev);
 
-	if (initializing) return;
+	if (_fInitializing)
+		return;
+
 	if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"Link_EnableAdmin"))
 	{
 		if (iev->uidType == TouchButton::Click)
 		{
-			IRectifyUtil *utility = ElevationManager::Initialize(GetMainHwnd());
+			IRectifyUtil *utility = ElevationManager::Initialize(_GetMainHwnd());
 			TouchCheckBox *MicaForEveryoneCheckbox = (TouchCheckBox *)FindDescendent(StrToID((LPCWSTR)L"MicaChk"));
 			TouchCheckBox *TabbedCheckbox = (TouchCheckBox *)FindDescendent(StrToID((LPCWSTR)L"TabChk"));
 			TouchButton *ThemetoolInstall = (TouchButton *)FindDescendent(StrToID((LPCWSTR)L"ThemetoolInstall"));
 			if (utility != NULL)
 			{
 				// Destroy old class
-				if (RectifyUtil != NULL)
+				if (_pRectifyUtil != NULL)
 				{
-					RectifyUtil->Release();
+					_pRectifyUtil->Release();
 				}
 
-				RectifyUtil = utility;
-				HasAdmin = TRUE;
+				_pRectifyUtil = utility;
+				_fAdmin = TRUE;
 
 				DWORD dwDefer = 0;
 				Element::StartDefer(&dwDefer);
@@ -179,15 +181,15 @@ void RectifyMainPage::OnEvent(Event *iev)
 
 			// apply the theme
 			themetool_set_active(NULL, themes[selection], TRUE, apply_flags, 0);
-			UpdateThemeGraphic();
+			_UpdateThemeGraphic();
 
 			// update mica
-			if (HasAdmin)
+			if (_fAdmin)
 			{
 				BOOL hasMica = FALSE;
 				BOOL hasTabbed = FALSE;
-				RectifyUtil->GetMicaSettings(&hasMica, &hasTabbed);
-				RectifyUtil->SetMicaForEveryoneEnabled(hasMica, hasTabbed);
+				_pRectifyUtil->GetMicaSettings(&hasMica, &hasTabbed);
+				_pRectifyUtil->SetMicaForEveryoneEnabled(hasMica, hasTabbed);
 
 				// update checkboxes in case we aren't using a mica theme anymore
 				MicaForEveryoneCheckbox->SetCheckedState(hasMica ? CSF_Checked : CSF_Unchecked);
@@ -212,7 +214,7 @@ void RectifyMainPage::OnEvent(Event *iev)
 			CheckedStateFlags MicaEnabled2 = MicaForEveryoneCheckbox->GetCheckedState();
 			CheckedStateFlags TabbedEnabled = TabbedCheckbox->GetCheckedState();
 
-			RectifyUtil->SetMicaForEveryoneEnabled(MicaEnabled2 == CSF_Checked ? TRUE : FALSE, TabbedEnabled ? CSF_Checked : CSF_Unchecked);
+			_pRectifyUtil->SetMicaForEveryoneEnabled(MicaEnabled2 == CSF_Checked ? TRUE : FALSE, TabbedEnabled ? CSF_Checked : CSF_Unchecked);
 
 			// Enable/disable the tabbed checkbox
 			if (TabbedCheckbox != NULL)
@@ -226,23 +228,23 @@ void RectifyMainPage::OnEvent(Event *iev)
 
 		if (iev->uidType == TouchButton::Click)
 		{
-			RectifyUtil->SetMicaForEveryoneEnabled(TRUE, TabbedCheckbox->GetCheckedState() == CSF_Checked ? TRUE : FALSE);
+			_pRectifyUtil->SetMicaForEveryoneEnabled(TRUE, TabbedCheckbox->GetCheckedState() == CSF_Checked ? TRUE : FALSE);
 		}
 	}
 	else if (iev->peTarget->GetID() == StrToID((LPCWSTR)L"ThemetoolInstall"))
 	{
 		iev->peTarget->SetEnabled(FALSE);
-		HRESULT hr = RectifyUtil->InstallThemeTool();
+		HRESULT hr = _pRectifyUtil->InstallThemeTool();
 		if (FAILED(hr))
 		{
 			CHAR buffer[1024];
 			std::string message = std::system_category().message(hr);
 
 			snprintf(buffer, sizeof(buffer), "Failed to install SecureUxTheme. Error code is %x, which translates to %s.", hr, message.c_str());
-			MessageBoxA(GetMainHwnd(), buffer, "Error during SecureUxTheme install", MB_ICONERROR);
+			MessageBoxA(_GetMainHwnd(), buffer, "Error during SecureUxTheme install", MB_ICONERROR);
 		}
 
-		UpdateThemetoolStatus();
+		_UpdateThemetoolStatus();
 		iev->peTarget->SetEnabled(TRUE);
 	}
 	// handle menu section
@@ -254,23 +256,23 @@ void RectifyMainPage::OnEvent(Event *iev)
 			HRESULT hr = E_ACTIVATIONDENIED_SHELLERROR;
 			if (chkbox->GetID() == StrToID((LPCWSTR)L"Win11DefaultMenus"))
 			{
-				hr = RectifyUtil->SetCurrentMenuByIndex(Normal);
+				hr = _pRectifyUtil->SetCurrentMenuByIndex(Normal);
 			}
 			else if (chkbox->GetID() == StrToID((LPCWSTR)L"NilesoftSmall"))
 			{
-				hr = RectifyUtil->SetCurrentMenuByIndex(NilesoftSmall);
+				hr = _pRectifyUtil->SetCurrentMenuByIndex(NilesoftSmall);
 			}
 			else if (chkbox->GetID() == StrToID((LPCWSTR)L"NilesoftFull"))
 			{
-				hr = RectifyUtil->SetCurrentMenuByIndex(NilesoftFull);
+				hr = _pRectifyUtil->SetCurrentMenuByIndex(NilesoftFull);
 			}
 			else if (chkbox->GetID() == StrToID((LPCWSTR)L"Classic"))
 			{
-				hr = RectifyUtil->SetCurrentMenuByIndex(Classic);
+				hr = _pRectifyUtil->SetCurrentMenuByIndex(Classic);
 			}
 			else if (chkbox->GetID() == StrToID((LPCWSTR)L"ClassicTransparent"))
 			{
-				hr = RectifyUtil->SetCurrentMenuByIndex(ClassicTransparent);
+				hr = _pRectifyUtil->SetCurrentMenuByIndex(ClassicTransparent);
 			}
 
 			if (FAILED(hr))
@@ -281,20 +283,20 @@ void RectifyMainPage::OnEvent(Event *iev)
 			}
 			else
 			{
-				ShowRestartExplorer();
+				_ShowRestartExplorer();
 			}
 		}
 	}
 }
 
-void RectifyMainPage::ShowRestartExplorer()
+void RectifyMainPage::_ShowRestartExplorer()
 {
 	TouchButton *BtnRestartExplorer = (TouchButton *)FindDescendent(StrToID((LPCWSTR)L"BtnRestartExplorer"));
 	BtnRestartExplorer->SetLayoutPos(0);
 	BtnRestartExplorer->SetVisible(TRUE);
 }
 
-void RectifyMainPage::UpdateThemeGraphic()
+void RectifyMainPage::_UpdateThemeGraphic()
 {
 	LPCWSTR id = IsDarkTheme() ? MAKEINTRESOURCE(IDB_DARKPREVIEW) : MAKEINTRESOURCE(IDB_LIGHTPREVIEW);
 	HBITMAP bmp = (HBITMAP)LoadImage(g_hInst, id, IMAGE_BITMAP, 256, 256, 0);
@@ -309,62 +311,41 @@ void RectifyMainPage::UpdateThemeGraphic()
 	bitmap->Release();
 }
 
-void RectifyMainPage::InitNavLinks()
+DEFINE_GUID(SID_PerLayoutPropertyBag, 0xA46E5C25, 0xC09C, 0x4CA8, 0x9A, 0x53, 0x49, 0xCF, 0x7F, 0x86, 0x55, 0x25);
+
+HRESULT RectifyMainPage::_InitNavLinks()
 {
-	auto pLinks = new CControlPanelNavLinks();
+	auto pLinks = new(std::nothrow) CControlPanelNavLinks();
 
-	WCHAR themePrefString[1024];
-	if (FAILED(LoadStringW(g_hInst, IDS_UPDATE, themePrefString, 1023)))
-	{
-		wcscpy_s(themePrefString, L"[ THEME APPLY PREF ]");
-	}
-	WCHAR sysInfoString[1024];
-	if (FAILED(LoadStringW(g_hInst, IDS_SYSINFO, sysInfoString, 1023)))
-	{
-		wcscpy_s(sysInfoString, L"[ SYS INFO ]");
-	}
-	WCHAR uninstallString[1024];
-	if (FAILED(LoadStringW(g_hInst, IDS_UNINSTALL, uninstallString, 1023)))
-	{
-		wcscpy_s(uninstallString, L"[ UNINSTALL ]");
-	}
+	if (!pLinks)
+		return E_OUTOFMEMORY;
 
-	pLinks->AddLinkControlPanel(CPNAV_LIST_TASKS, g_hInst, IDS_UPDATE, L"Rectify11.SettingsCPL", L"pageThemePref", NULL);
-	pLinks->AddLinkShellEx(CPNAV_LIST_TASKS, g_hInst, IDS_UNINSTALL, L"C:\\Windows\\Rectify11\\Uninstall.exe", L"", NULL);
-	pLinks->AddLinkControlPanel(CPNAV_LIST_SEEALSO, g_hInst, IDS_SYSINFO, L"Microsoft.System", L"", NULL);
-
-
-	GUID SID_PerLayoutPropertyBag = {};
-	HRESULT hr = CLSIDFromString(L"{a46e5c25-c09c-4ca8-9a53-49cf7f865525}", (LPCLSID)&SID_PerLayoutPropertyBag);
+	CControlPanelNavLink *pLink;
+	HRESULT hr = pLinks->AddLinkControlPanel(CPNAV_LIST_TASKS, g_hInst, IDS_UPDATE, L"Rectify11.SettingsCPL", L"pageThemePref", &pLink);
 	if (SUCCEEDED(hr))
 	{
-		IPropertyBag *bag = NULL;
-		hr = IUnknown_QueryService(_punkSite, SID_PerLayoutPropertyBag, IID_IPropertyBag, (LPVOID *)&bag);
+		hr = pLinks->AddLinkShellEx(CPNAV_LIST_TASKS, g_hInst, IDS_UNINSTALL, L"C:\\Windows\\Rectify11\\Uninstall.exe", L"", &pLink);
 		if (SUCCEEDED(hr))
 		{
-			hr = PSPropertyBag_WriteUnknown(bag, L"ControlPanelNavLinks", pLinks);
+			hr = pLinks->AddLinkControlPanel(CPNAV_LIST_SEEALSO, g_hInst, IDS_SYSINFO, L"Microsoft.System", L"", &pLink);
 			if (SUCCEEDED(hr))
 			{
-				hr = S_OK;
+				IPropertyBag *ppb;
+				hr = IUnknown_QueryService(_punkSite, SID_PerLayoutPropertyBag, IID_PPV_ARGS(&ppb));
+				if (SUCCEEDED(hr))
+				{
+					hr = PSPropertyBag_WriteUnknown(ppb, L"ControlPanelNavLinks", pLinks);
+					ppb->Release();
+				}
 			}
-			else
-			{
-				MessageBox(NULL, TEXT("Failed to write property bag for navigation links"), TEXT("CElementProvider::InitNavLinks"), 0);
-			}
-			bag->Release();
-		}
-		else
-		{
-			MessageBox(NULL, TEXT("Failed to get property bag for navigation links"), TEXT("CElementProvider::InitNavLinks"), 0);
 		}
 	}
-	else
-	{
-		MessageBox(NULL, TEXT("Failed to parse hardcoded GUID (SID_PerLayoutPropertyBag)"), TEXT("CElementProvider::InitNavLinks"), 0);
-	}
+
+	pLinks->Release();
+	return hr;
 }
 
-void RectifyMainPage::UpdateThemetoolStatus()
+void RectifyMainPage::_UpdateThemetoolStatus()
 {
 	Element *status = (TouchButton *)FindDescendent(StrToID((LPCWSTR)L"ThemetoolStatus"));
 
@@ -454,8 +435,8 @@ HRESULT RectifyMainPage::LayoutInitialized()
 	}
 
 	Element *root = GetRoot();
-	RectifyUtil = (IRectifyUtil *)new CRectifyUtil();
-	InitNavLinks();
+	_pRectifyUtil = (IRectifyUtil *)new CRectifyUtil();
+	_InitNavLinks();
 
 	Combobox *ThemeCombo = (Combobox *)root->FindDescendent(StrToID((LPCWSTR)L"ThemeCmb"));
 	Button *HelpButton = (Button *)root->FindDescendent(StrToID((LPCWSTR)L"buttonHelp"));
@@ -578,7 +559,7 @@ HRESULT RectifyMainPage::LayoutInitialized()
 		MicaForEveryoneCheckbox->SetToggleOnClick(true);
 		BOOL MicaEnabled;
 		BOOL TabbedEnabled;
-		RectifyUtil->GetMicaSettings(&MicaEnabled, &TabbedEnabled);
+		_pRectifyUtil->GetMicaSettings(&MicaEnabled, &TabbedEnabled);
 
 		MicaForEveryoneCheckbox->SetCheckedState(MicaEnabled ? CSF_Checked : CSF_Unchecked);
 
@@ -592,7 +573,7 @@ HRESULT RectifyMainPage::LayoutInitialized()
 	{
 		BOOL MicaEnabled;
 		BOOL TabbedEnabled;
-		RectifyUtil->GetMicaSettings(&MicaEnabled, &TabbedEnabled);
+		_pRectifyUtil->GetMicaSettings(&MicaEnabled, &TabbedEnabled);
 
 		TabbedCheckbox->SetToggleOnClick(true);
 		TabbedCheckbox->SetCheckedState(MicaEnabled ? CSF_Checked : CSF_Unchecked);
@@ -608,17 +589,17 @@ HRESULT RectifyMainPage::LayoutInitialized()
 
 	for (size_t i = 0; i < 5; i++)
 	{
-		if (!HasAdmin)
+		if (!_fAdmin)
 			Options[i]->SetEnabled(FALSE);
 		else
 			Options[i]->SetEnabled(TRUE);
 	}
-	if (SUCCEEDED(RectifyUtil->GetCurrentMenuIndex(&menuIndex)))
+	if (SUCCEEDED(_pRectifyUtil->GetCurrentMenuIndex(&menuIndex)))
 	{
 		Options[menuIndex]->SetSelected(true);
 	}
 
-	if (HasAdmin)
+	if (_fAdmin)
 	{
 		enableAdmin->SetLayoutPos(-3);
 		enableAdmin->SetVisible(FALSE);
@@ -631,10 +612,10 @@ HRESULT RectifyMainPage::LayoutInitialized()
 		ThemetoolInstall->SetEnabled(FALSE);
 	}
 
-	UpdateThemetoolStatus();
+	_UpdateThemetoolStatus();
 
-	UpdateThemeGraphic();
-	initializing = false;
+	_UpdateThemeGraphic();
+	_fInitializing = false;
 
 	return S_OK;
 }
@@ -644,9 +625,10 @@ HRESULT RectifyMainPage::OnInnerElementDestroyed()
 	return S_OK;
 }
 
-HWND RectifyMainPage::GetMainHwnd()
+HWND RectifyMainPage::_GetMainHwnd()
 {
-	GUID SID_STopLevelBrowser = {}, IID_IFrameManager = {};
+	GUID SID_STopLevelBrowser = {};
+	IID IID_IFrameManager = {};
 	HRESULT hr = CLSIDFromString(L"{4c96be40-915c-11cf-99d3-00aa004ae837}", (LPCLSID)&SID_STopLevelBrowser);
 	HWND result = NULL;
 	if (SUCCEEDED(hr))
@@ -668,10 +650,10 @@ HWND RectifyMainPage::GetMainHwnd()
 
 void RectifyMainPage::OnDestroy()
 {
-	if (RectifyUtil != NULL)
+	if (_pRectifyUtil != NULL)
 	{
-		RectifyUtil->Release();
-		RectifyUtil = NULL;
+		_pRectifyUtil->Release();
+		_pRectifyUtil = NULL;
 	}
 
 	Element::OnDestroy();

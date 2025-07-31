@@ -14,7 +14,7 @@ public:
 	FrameProvider(HINSTANCE hinst, LPCWSTR pszCommonResidToCreate);
 
 	// == Begin IUnknown Impl ==
-	IFACEMETHOD (QueryInterface)(_In_ REFIID riid, _Out_ LPVOID *ppv) override;
+	IFACEMETHOD(QueryInterface)(_In_ REFIID riid, _Out_ LPVOID *ppv) override;
 	IFACEMETHOD_(ULONG, AddRef)() override;
 	IFACEMETHOD_(ULONG, Release)() override;
 	// == End IUnknown Impl ==

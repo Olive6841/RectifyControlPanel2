@@ -3,8 +3,8 @@
 #include "CControlPanelNavLinks.h"
 
 CControlPanelNavLinks::CControlPanelNavLinks()
-	: _hdpaNavLinks(NULL)
-	  , _cRef(1)
+	: _hdpaNavLinks(nullptr)
+	, _cRef(1)
 {
 }
 
@@ -19,22 +19,22 @@ int CALLBACK NavLinksDPA_DeleteCB(CControlPanelNavLink *pLink, void *pData)
 
 CControlPanelNavLinks::~CControlPanelNavLinks()
 {
-	if (!_hdpaNavLinks == NULL)
+	if (_hdpaNavLinks)
 	{
-		DPA_DestroyCallback(_hdpaNavLinks, (PFNDAENUMCALLBACKCONST)NavLinksDPA_DeleteCB, NULL);
-		_hdpaNavLinks = NULL;
+		DPA_DestroyCallback(_hdpaNavLinks, (PFNDAENUMCALLBACKCONST)NavLinksDPA_DeleteCB, nullptr);
+		_hdpaNavLinks = nullptr;
 	}
 }
 
-IFACEMETHODIMP CControlPanelNavLinks::QueryInterface(REFIID riid, __out void** ppv)
+IFACEMETHODIMP CControlPanelNavLinks::QueryInterface(REFIID riid, __out void **ppv)
 {
-	*ppv = NULL;
-	if (riid == IID_IUnknown)
+	static const QITAB qit[] =
 	{
-		*ppv = (IUnknown*)this;
-		return S_OK;
-	}
-	return E_NOINTERFACE;
+		QITABENT(CControlPanelNavLinks, IUnknown),
+		{ 0 },
+	};
+
+	return QISearch(this, qit, riid, ppv);
 }
 
 IFACEMETHODIMP_(ULONG) CControlPanelNavLinks::AddRef()
@@ -44,12 +44,13 @@ IFACEMETHODIMP_(ULONG) CControlPanelNavLinks::AddRef()
 
 IFACEMETHODIMP_(ULONG) CControlPanelNavLinks::Release()
 {
-	ULONG ref = InterlockedDecrement(&_cRef);
-	if (ref == 0)
+	ULONG cRef = InterlockedDecrement(&_cRef);
+	if (!cRef && this)
 	{
 		delete this;
 	}
-	return ref;
+
+	return cRef;
 }
 
 HRESULT CControlPanelNavLinks::AddLinkNotify(CPNAV_LIST list, HINSTANCE hInstance, UINT nNameResId, int nLinkId, CControlPanelNavLink **ppLink)

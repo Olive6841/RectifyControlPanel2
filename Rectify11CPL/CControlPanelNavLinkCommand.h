@@ -63,7 +63,25 @@ public:
 		return hr;
 	}
 
-	CControlPanelNavLinkCommand *Copy();
+	CControlPanelNavLinkCommand *Copy()
+	{
+		return 0; // TODO: Implement this
+	}
+
+	bool CanInvoke(IOpenControlPanel *pocp)
+	{
+		return true; // TODO: Implement this
+	}
+
+	HRESULT Invoke(HWND, IUnknown *)
+	{
+		return E_NOTIMPL; // TODO: Implement this
+	}
+
+	void UseNavPaneProvider()
+	{
+		_fUseNavPaneProvider = true;
+	}
 
 	void LogRecentItems()
 	{

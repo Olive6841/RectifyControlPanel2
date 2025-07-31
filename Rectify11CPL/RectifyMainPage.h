@@ -33,17 +33,17 @@ public:
 	virtual HRESULT OnInnerElementDestroyed() override;
 
 private:
-	IUnknown *_punkSite;
-	bool HasAdmin;
-	IRectifyUtil* RectifyUtil = NULL;
-	bool initializing;
+	void _UpdateThemeGraphic();
+	void _ShowRestartExplorer();
+	HRESULT _InitNavLinks();
+	void _UpdateThemetoolStatus();
+	HWND _GetMainHwnd();
+
+	IUnknown* _punkSite;
+	BOOL _fAdmin;
+	IRectifyUtil* _pRectifyUtil;
+	bool _fInitializing;
 
 	vector<ULONG> themes;
 	ThemesMapBase ThemesMap;
-
-	void UpdateThemeGraphic();
-	void ShowRestartExplorer();
-	void InitNavLinks();
-	void UpdateThemetoolStatus();
-	HWND GetMainHwnd();
 };
